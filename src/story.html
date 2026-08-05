@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<!--
+  Ajanta Tower - the case for paying up, told as a scrolling deck.
+  Single page, no build step. Every figure comes from the same register the accounts page uses.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ajanta Tower — What happens when we all pay</title>
+<meta name="author" content="Ajanta Services Association">
+<meta name="description" content="How one address changes when every owner clears their maintenance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12293F; --ink-soft:#5B7488; --line:#DDE7EF;
+  --bg:#F6FAFD; --gold:#F5A524; --teal:#12A08A; --coral:#EF6C4D; --sky:#2E8BC0;
+  --red:#D24A2C; --grey:#B9AAA5;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:16px;line-height:1.55}
+h1,h2,h3,h4{font-family:"Bricolage Grotesque","Plus Jakarta Sans",sans-serif;font-weight:700;margin:0;
+  letter-spacing:-.025em;line-height:1.08}
+.num{font-family:"Space Grotesk",monospace;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+
+.slide{min-height:100svh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;
+  padding:64px 22px;position:relative;overflow:hidden}
+.inner{width:100%;max-width:620px;margin:0 auto}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--sky);
+  display:block;margin-bottom:14px}
+.slide h2{font-size:clamp(28px,8vw,46px)}
+.slide p.lede{font-size:clamp(15px,4vw,17.5px);line-height:1.6;color:var(--ink-soft);margin:16px 0 0}
+.slide p.lede b{color:var(--ink)}
+
+.rise{opacity:0;transform:translateY(26px)}
+.in .rise{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.in .rise:nth-child(2){transition-delay:.09s}
+.in .rise:nth-child(3){transition-delay:.18s}
+.in .rise:nth-child(4){transition-delay:.27s}
+.in .rise:nth-child(5){transition-delay:.36s}
+.in .rise:nth-child(6){transition-delay:.45s}
+
+.s1{background:radial-gradient(900px 460px at 74% -6%,rgba(245,165,36,.3),transparent 62%),
+  linear-gradient(180deg,#FFF7E9,#EAF4FE 60%,var(--bg))}
+.s1 h1{font-size:clamp(34px,10vw,62px);max-width:13ch}
+.hero-twr{width:104px;height:140px;margin-bottom:26px;position:relative}
+.hero-twr svg{width:100%;height:100%;display:block;position:relative;z-index:2}
+.hero-twr:after{content:"";position:absolute;left:50%;top:54%;width:230px;height:230px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:1;
+  background:radial-gradient(circle,rgba(245,165,36,.42),rgba(245,165,36,0) 68%)}
+.twin{opacity:.14}
+.in .twin{animation:twinOn .5s ease forwards}
+@keyframes twinOn{to{opacity:1}}
+.scrollcue{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);animation:cue 1.7s ease-in-out infinite}
+@keyframes cue{0%,100%{opacity:.35;transform:translateY(0)}50%{opacity:1;transform:translateY(5px)}}
+
+.plan{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 13px;margin-top:22px;
+  box-shadow:0 1px 2px rgba(18,41,63,.05),0 12px 30px -18px rgba(18,41,63,.3)}
+.floor{display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;padding:5px 0}
+.floor b{font-family:"Space Grotesk",monospace;font-size:11px;color:var(--ink-soft)}
+.tiles{display:flex;flex-wrap:wrap;gap:3px}
+.t{width:14px;height:17px;border-radius:3px;border:1.4px solid;background:#F6F1F0;border-color:#DFCFCB;
+  transition:background .45s ease,border-color .45s ease,transform .45s cubic-bezier(.2,1.6,.4,1)}
+.t.z{background:#FBDDD6;border-color:var(--red)}
+.t.a{background:#F6F1F0;border-color:#DFCFCB;border-style:dashed}
+.t.p{background:#FFEDCB;border-color:var(--gold)}
+.t.n{background:#EAF9F1;border-color:#4FBF9A}
+.t.g{background:#D7F3EC;border-color:var(--teal)}
+.t.on{background:#D7F3EC!important;border-color:var(--teal)!important;border-style:solid!important;
+  transform:scale(1.22)}
+.t.pop{animation:tpop .5s cubic-bezier(.2,1.7,.4,1)}
+@keyframes tpop{0%{transform:scale(1)}45%{transform:scale(1.5)}100%{transform:scale(1.22)}}
+.key{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;font-size:11.5px;font-weight:600;color:var(--ink-soft)}
+.key span{display:flex;align-items:center;gap:6px}
+.key i{width:13px;height:13px;border-radius:4px;border:1.4px solid;display:block}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:11px;margin-top:22px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;position:relative;overflow:hidden}
+.stat:after{content:"";position:absolute;inset:auto 0 0 0;height:4px;background:var(--c,var(--sky))}
+.stat .k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.stat .v{font-family:"Space Grotesk",monospace;font-size:clamp(21px,5.6vw,26px);font-weight:700;margin-top:5px}
+
+.big{font-family:"Space Grotesk",monospace;font-weight:700;letter-spacing:-.04em;
+  font-size:clamp(42px,14vw,86px);line-height:1}
+.big.red{color:var(--red)}
+.big.green{color:var(--teal)}
+.cap{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);
+  margin-top:10px}
+
+.bar{height:16px;border-radius:999px;background:#E7EFF5;overflow:hidden;margin-top:20px;display:flex}
+.bar i{display:block;height:100%;width:0;transition:width 1.4s cubic-bezier(.2,.8,.3,1)}
+.bar .paid{background:linear-gradient(90deg,#2ECFAF,var(--teal))}
+.bar .due{background:repeating-linear-gradient(45deg,#F0D9D3 0 7px,#E5C9C2 7px 14px)}
+.barlab{display:flex;justify-content:space-between;font-family:"Space Grotesk",monospace;font-size:12px;
+  font-weight:700;color:var(--ink-soft);margin-top:9px;gap:10px;flex-wrap:wrap}
+
+.list{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.li{display:grid;grid-template-columns:30px 1fr auto;gap:11px;padding:13px 15px;align-items:center;
+  border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-family:"Space Grotesk",monospace;
+  font-size:12px;font-weight:700;color:#fff;background:var(--teal)}
+.li .tx{font-size:14px;font-weight:600;line-height:1.35}
+.li .tx small{display:block;font-weight:500;font-size:12px;color:var(--ink-soft);margin-top:2px}
+.li .am{font-family:"Space Grotesk",monospace;font-weight:700;font-size:14px;white-space:nowrap}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:22px}
+@media(max-width:430px){.two{grid-template-columns:1fr}}
+.col{border-radius:16px;padding:16px;border:1.5px solid}
+.col h4{font-size:15px;margin-bottom:9px}
+.col ul{margin:0;padding:0;list-style:none}
+.col li{font-size:12.5px;line-height:1.5;padding:4px 0 4px 15px;position:relative}
+.col li:before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:50%}
+.col.bad{background:#FAF4F2;border-color:#E5D2CD}
+.col.bad h4{color:#8E4A34}.col.bad li{color:#7B6A66}.col.bad li:before{background:#C08B7C}
+.col.good{background:#EAF8F2;border-color:#B6E5D2}
+.col.good h4{color:#0B6B52}.col.good li{color:#3D6B5D}.col.good li:before{background:var(--teal)}
+
+.sEnd{background:linear-gradient(180deg,#0C1D2D,#12293F 60%,#173A55);color:#fff}
+.sEnd h2{color:#fff}
+.sEnd p.lede{color:#AFC7D8}
+.sEnd p.lede b{color:#fff}
+.sEnd .eyebrow{color:var(--gold)}
+.sign{margin-top:26px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#7E9DB4}
+
+.dots{position:fixed;right:11px;top:50%;transform:translateY(-50%);z-index:40;display:flex;
+  flex-direction:column;gap:8px}
+.dots i{width:7px;height:7px;border-radius:50%;background:#C3D3DF;display:block;transition:all .3s ease}
+.dots i.on{background:var(--ink);transform:scale(1.5)}
+@media(max-width:420px){.dots{right:7px}}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rise{opacity:1;transform:none}
+  .twin{opacity:1}
+  .scrollcue{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="dots" id="dots" aria-hidden="true"></div>
+
+<section class="slide s1">
+  <div class="inner">
+    <div class="hero-twr rise" id="heroTwr"></div>
+    <span class="eyebrow rise">Ajanta Services Association</span>
+    <h1 class="rise">One address. <span id="ownN">54</span> owners. One decision.</h1>
+    <p class="lede rise">This is the short version of where Ajanta Tower stands today — and what it turns into the day everybody pays. Every figure here comes from the same register you can open yourself.</p>
+  </div>
+  <div class="scrollcue">Scroll</div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">Today</span>
+    <h2 class="rise">This is the building right now.</h2>
+    <p class="lede rise">Every block is one shop. <b>119 shops, four floors.</b> The colour is simply whether the maintenance came in.</p>
+    <div class="plan rise" id="planA"></div>
+    <div class="key rise">
+      <span><i style="background:#FBDDD6;border-color:#D24A2C"></i><b id="bz">28</b>&nbsp;paid nothing</span>
+      <span><i style="background:#F6F1F0;border-color:#DFCFCB;border-style:dashed"></i><b id="ba">17</b>&nbsp;a quarter behind</span>
+      <span><i style="background:#FFEDCB;border-color:#F5A524"></i><b id="bp">2</b>&nbsp;part paid</span>
+      <span><i style="background:#D7F3EC;border-color:#12A08A"></i><b id="bg">7</b>&nbsp;fully paid</span>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">The gap</span>
+    <h2 class="rise">Half the bill is still standing outside.</h2>
+    <div class="bar rise"><i class="paid" id="barPaid"></i><i class="due" id="barDue"></i></div>
+    <div class="barlab rise"><span id="lblPaid">—</span><span id="lblDue">—</span></div>
+    <div class="stats rise">
+      <div class="stat" style="--c:var(--teal)"><div class="k">Collected</div><div class="v num" id="nPaid">—</div></div>
+      <div class="stat" style="--c:var(--gold)"><div class="k">Spent on the building</div><div class="v num" id="nSpent">—</div></div>
+      <div class="stat" style="--c:var(--coral)"><div class="k">Bills on the table</div><div class="v num" id="nBills">—</div></div>
+    </div>
+    <p class="lede rise">After paying for six months of housekeeping, electricity and repairs, <b id="nHold">—</b> is left in the account. The bills already raised come to <b id="nBills2">—</b>. The association is <b class="num" style="color:var(--red)" id="nShort">—</b> short today.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">One owner</span>
+    <h2 class="rise">A red block turns green like this.</h2>
+    <div class="rise" style="display:flex;align-items:center;gap:18px;margin-top:26px">
+      <div class="t z" id="demoTile" style="width:64px;height:78px;border-radius:12px;border-width:3px"></div>
+      <div>
+        <div class="num" style="font-size:30px;font-weight:700" id="demoArrow">→</div>
+      </div>
+      <div class="t" id="demoTile2" style="width:64px;height:78px;border-radius:12px;border-width:3px"></div>
+    </div>
+    <p class="lede rise">No meeting. No notice. No argument. One owner clears what is theirs, and one block on this map changes colour for good.</p>
+    <p class="lede rise"><b>Every block that turns green is a few more days the building runs without borrowing from somebody else.</b></p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">The heavy shoulders</span>
+    <h2 class="rise">Ten owners hold <span id="majShare">59%</span> of this building.</h2>
+    <p class="lede rise">Watch what happens to the map when only those ten clear their side.</p>
+    <div class="plan rise" id="planB"></div>
+    <div class="stats rise">
+      <div class="stat" style="--c:var(--teal)"><div class="k">Collection jumps to</div><div class="v num" id="nAfterMaj">—</div></div>
+      <div class="stat" style="--c:var(--sky)"><div class="k">Every bill cleared, and left over</div><div class="v num" id="nAfterBills">—</div></div>
+    </div>
+    <p class="lede rise">Ten decisions. That is all it takes to move this building from short to safe.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">Everybody</span>
+    <h2 class="rise">And this is all <span id="ownN2">54</span>.</h2>
+    <div class="plan rise" id="planC"></div>
+    <div class="rise" style="margin-top:24px">
+      <div class="big green num" id="allSum">—</div>
+      <div class="cap">Collected, if every owner clears</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">What it buys</span>
+    <h2 class="rise">Then the building stops surviving and starts improving.</h2>
+    <div class="list rise">
+      <div class="li"><div class="ic">1</div><div class="tx">Every raised bill paid<small>Electricity and housekeeping, cleared the same week</small></div><div class="am" id="pBills">—</div></div>
+      <div class="li"><div class="ic">2</div><div class="tx">Left in the association's hands<small>Not spare money — the building's own cushion</small></div><div class="am" id="pSurplus">—</div></div>
+      <div class="li"><div class="ic">3</div><div class="tx">Months of running cost banked<small>At the building's real cost of <span id="pMonthly">—</span> a month</small></div><div class="am" id="pMonths">—</div></div>
+    </div>
+    <p class="lede rise">A building that is never chasing its own bills can finally look up — paint, lighting, signage, security, a lift under contract instead of under repair. None of that is possible while the account is running behind.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow rise">The two Ajantas</span>
+    <h2 class="rise">Same tower. Two futures.</h2>
+    <div class="two rise">
+      <div class="col bad"><h4>If the money stops</h4><ul>
+        <li>Housekeeping goes first</li>
+        <li>Dark passages, short water</li>
+        <li>Tenants leave, rent falls</li>
+        <li>The address loses its name</li>
+      </ul></div>
+      <div class="col good"><h4>If the money comes</h4><ul>
+        <li>Clean, lit, running</li>
+        <li>Tenants stay, new ones ask</li>
+        <li>Rent holds and climbs</li>
+        <li>The address gains value</li>
+      </ul></div>
+    </div>
+    <p class="lede rise">Nobody is choosing between two buildings. <b>It is the same 40,111 sq ft either way.</b> The only thing that decides which one you wake up owning is whether the money comes.</p>
+  </div>
+</section>
+
+<section class="slide sEnd">
+  <div class="inner">
+    <span class="eyebrow rise">Your turn</span>
+    <h2 class="rise">The tower is worth what we decide it is worth.</h2>
+    <p class="lede rise">Seven owners have already cleared everything. Two are most of the way there. The rest of this map is still waiting on a decision that costs less than a month's rent on a single shop.</p>
+    <p class="lede rise"><b>Clear your side. Watch your block turn green.</b></p>
+    <div class="sign">Ajanta Services Association · Open accounts</div>
+  </div>
+</section>
+
+<script>
+const S = {"tiles": {"LGF": [["a", 0], ["z", 0], ["z", 0], ["a", 0], ["z", 0], ["g", 0], ["a", 0], ["z", 0], ["z", 0], ["z", 0], ["z", 0], ["z", 0], ["z", 0], ["z", 1], ["z", 1], ["z", 1], ["z", 1], ["a", 0], ["a", 0], ["z", 0], ["z", 0], ["z", 0], ["z", 0], ["a", 0], ["z", 0], ["a", 0], ["a", 0], ["g", 1], ["g", 1], ["z", 0], ["z", 0], ["a", 0], ["z", 0], ["z", 0], ["a", 0], ["a", 0], ["a", 0], ["a", 0], ["a", 0]], "UGF": [["a", 0], ["g", 0], ["g", 0], ["g", 0], ["g", 0], ["g", 0], ["g", 0], ["z", 0], ["g", 0], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["z", 0], ["z", 0], ["z", 1], ["z", 1], ["z", 1], ["z", 0], ["a", 0], ["a", 0], ["a", 0], ["z", 1], ["a", 0], ["a", 0], ["g", 1], ["g", 1], ["g", 1], ["z", 0], ["g", 1], ["g", 1], ["g", 1], ["g", 1], ["g", 1]], "FF": [["z", 0], ["g", 0], ["g", 0], ["g", 0], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["a", 1], ["z", 1], ["z", 1], ["z", 0], ["a", 0], ["a", 0], ["z", 1], ["z", 1], ["z", 1], ["z", 0], ["z", 0], ["z", 1], ["z", 1], ["z", 1], ["z", 1], ["z", 1], ["z", 1], ["z", 0], ["p", 1], ["p", 1], ["p", 1], ["p", 1], ["p", 1], ["p", 1], ["g", 1], ["g", 1], ["a", 0], ["z", 0], ["z", 0], ["g", 1]], "SF": [["p", 1], ["g", 1]]}, "owners": 54, "bands": {"g": 8, "p": 2, "a": 16, "z": 28}, "demand": 962576, "paid": 484690, "spent": 440629, "hold": 44061, "bills": 170000, "short": 125939, "pending": 478688, "majN": 10, "majPending": 221888, "majShare": 58.9, "monthly": 73438, "area": 40111, "afterMaj": 706578, "surplus": 351947, "months": 4.8};
+const inr = n => "\u20B9" + Math.round(n).toLocaleString("en-IN");
+const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function towerSVG(){
+  let w = "";
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 4; c++)
+      w += '<rect class="twin" x="' + (19 + c * 14) + '" y="' + (30 + r * 20) +
+        '" width="10" height="13" rx="2" fill="#FFC868" style="animation-delay:' +
+        (300 + (3 - r) * 170 + c * 50) + 'ms"/>';
+  return '<svg viewBox="0 0 90 122" aria-hidden="true">' +
+    '<rect x="9" y="20" width="72" height="96" rx="6" fill="#12293F"/>' +
+    '<rect x="6" y="12" width="78" height="11" rx="5" fill="#22506F"/>' + w +
+    '<rect class="twin" x="37" y="99" width="16" height="17" rx="2" fill="#FFC868" style="animation-delay:1250ms"/>' +
+    '</svg>';
+}
+document.getElementById("heroTwr").innerHTML = towerSVG();
+
+const FL = ["LGF", "UGF", "FF", "SF"];
+function buildPlan(host){
+  let html = "";
+  FL.forEach(function(f){
+    html += '<div class="floor"><b>' + f + '</b><div class="tiles">';
+    (S.tiles[f] || []).forEach(function(t, i){
+      html += '<span class="t ' + t[0] + '" data-f="' + f + '" data-i="' + i + '" data-m="' + t[1] + '"></span>';
+    });
+    html += '</div></div>';
+  });
+  host.innerHTML = html;
+}
+["planA", "planB", "planC"].forEach(function(id){ buildPlan(document.getElementById(id)); });
+
+document.getElementById("ownN").textContent = S.owners;
+document.getElementById("ownN2").textContent = S.owners;
+document.getElementById("bz").textContent = S.bands.z;
+document.getElementById("ba").textContent = S.bands.a;
+document.getElementById("bp").textContent = S.bands.p;
+document.getElementById("bg").textContent = S.bands.g;
+document.getElementById("majShare").textContent = S.majShare + "%";
+document.getElementById("nBills2").textContent = inr(S.bills);
+document.getElementById("nHold").textContent = inr(S.hold);
+document.getElementById("pBills").textContent = inr(S.bills);
+document.getElementById("pSurplus").textContent = inr(S.surplus);
+document.getElementById("pMonthly").textContent = inr(S.monthly);
+document.getElementById("pMonths").textContent = S.months + " months";
+document.getElementById("demoTile2").className = "t g";
+
+function countTo(el, to){
+  if (!el) return;
+  if (REDUCED){ el.textContent = inr(to); return; }
+  const t0 = performance.now(), dur = 1300;
+  const step = function(t){
+    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = inr(to * e);
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function greenify(host, onlyMajors){
+  const tiles = host.querySelectorAll(".t");
+  let n = 0;
+  tiles.forEach(function(t){
+    if (onlyMajors && t.dataset.m !== "1") return;
+    if (t.classList.contains("g")) return;
+    const d = 260 + n * 26; n++;
+    setTimeout(function(){ t.classList.add("on", "pop"); }, d);
+  });
+}
+
+const seen = {};
+const io = new IntersectionObserver(function(en){
+  en.forEach(function(e){
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    const i = slides.indexOf(e.target);
+    dots.forEach(function(d, k){ d.classList.toggle("on", k === i); });
+    if (seen[i]) return;
+    seen[i] = 1;
+    if (i === 2){
+      const pct = S.paid / S.demand * 100;
+      setTimeout(function(){
+        document.getElementById("barPaid").style.width = pct + "%";
+        document.getElementById("barDue").style.width = (100 - pct) + "%";
+      }, 260);
+      document.getElementById("lblPaid").textContent = inr(S.paid) + " in";
+      document.getElementById("lblDue").textContent = inr(S.pending) + " still out";
+      countTo(document.getElementById("nPaid"), S.paid);
+      countTo(document.getElementById("nSpent"), S.spent);
+      countTo(document.getElementById("nBills"), S.bills);
+      document.getElementById("nShort").textContent = inr(S.short);
+    }
+    if (i === 3 && !REDUCED){
+      const a = document.getElementById("demoTile");
+      setTimeout(function(){ a.classList.remove("z"); a.classList.add("on", "pop"); }, 900);
+    }
+    if (i === 4){
+      greenify(document.getElementById("planB"), true);
+      countTo(document.getElementById("nAfterMaj"), S.afterMaj);
+      countTo(document.getElementById("nAfterBills"), S.afterMaj - S.spent - S.bills);
+    }
+    if (i === 5){
+      greenify(document.getElementById("planC"), false);
+      setTimeout(function(){ countTo(document.getElementById("allSum"), S.demand); }, 500);
+    }
+  });
+}, {threshold:0.35});
+
+const slides = [].slice.call(document.querySelectorAll(".slide"));
+const dotBox = document.getElementById("dots");
+slides.forEach(function(){ dotBox.appendChild(document.createElement("i")); });
+const dots = [].slice.call(dotBox.querySelectorAll("i"));
+slides.forEach(function(s){ io.observe(s); });
+</script>
+</body>
+</html>
