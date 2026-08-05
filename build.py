@@ -79,46 +79,69 @@ def wrap(draw, text, font, width):
 # ---------------------------------------------------------------- preview images
 def owner_image(key, o, path):
     ink, wash, label = IMG_TONE[band_of(o)]
-    im = Image.new("RGB", (1200, 630), "#FCFBF8")
+    W, HGT = 1200, 1200
+    im = Image.new("RGB", (W, HGT), "#FCFBF8")
     d  = ImageDraw.Draw(im)
-    d.rectangle([0, 0, 1200, 12], fill=ink)
-    d.rectangle([0, 12, 1200, 150], fill=wash)
-    d.text((70, 58), "AJANTA TOWER  \u00B7  " + label,
-           font=ImageFont.truetype(FONT_B, 21), fill=ink)
+    # a drawn skyline behind everything - our own artwork, very faint
+    sky = Image.new("RGBA", (W, HGT), (0, 0, 0, 0))
+    sd  = ImageDraw.Draw(sky)
+    for bx, bw, bh in [(-40, 230, 96), (210, 260, 138), (500, 200, 84),
+                       (730, 250, 124), (1010, 230, 100)]:
+        sd.rectangle([bx, HGT - 24 - bh, bx + bw, HGT - 24], fill=(11, 18, 32, 5))
+    im.paste(Image.alpha_composite(im.convert("RGBA"), sky).convert("RGB"), (0, 0))
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, W, 18], fill=ink)
+    d.rectangle([0, 18, W, 190], fill=wash)
+    d.text((70, 74), "AJANTA TOWER", font=ImageFont.truetype(FONT_B, 30), fill=ink)
+    d.text((70, 122), label, font=ImageFont.truetype(FONT_B, 25), fill=ink)
 
-    size = 50
-    while size > 26:
+    size = 76
+    while size > 34:
         f_name = ImageFont.truetype(FONT_B, size)
         if len(wrap(d, o["n"], f_name, 1060)) <= 2:
             break
-        size -= 3
-    y = 186
+        size -= 4
+    y = 268
     for line in wrap(d, o["n"], f_name, 1060)[:2]:
         d.text((70, y), line, font=f_name, fill="#14171C")
-        y += int(size * 1.16)
+        y += int(size * 1.18)
 
-    d.text((70, y + 8), (o["u"] or "")[:74],
-           font=ImageFont.truetype(FONT_R, 24), fill="#5B7488")
+    f_u = ImageFont.truetype(FONT_R, 30)
+    uy = y + 14
+    for line in wrap(d, (o["u"] or ""), f_u, 1060)[:2]:
+        d.text((70, uy), line, font=f_u, fill="#5B7488"); uy += 40
 
-    f_lab = ImageFont.truetype(FONT_B, 19)
-    f_num = ImageFont.truetype(FONT_B, 50)
-    f_big = ImageFont.truetype(FONT_B, 74)
-    yb = 392
-    d.line([70, yb - 26, 1130, yb - 26], fill="#DDE7EF", width=2)
-    d.text((70,  yb), "BILL", font=f_lab, fill="#8A9099")
-    d.text((70,  yb + 30), rupees(o["dm"]), font=f_num, fill="#14171C")
-    d.text((360, yb), "PAID", font=f_lab, fill="#8A9099")
-    d.text((360, yb + 30), rupees(o["p"]), font=f_num, fill="#0B6B52")
+    f_lab = ImageFont.truetype(FONT_B, 24)
+    f_num = ImageFont.truetype(FONT_B, 58)
+    f_big = ImageFont.truetype(FONT_B, 132)
+
+    # the headline figure gets a panel of its own
+    d.rounded_rectangle([60, 560, 1140, 812], 26, fill=wash)
     if o["b"] > 0:
-        d.text((700, yb), "STILL TO PAY", font=f_lab, fill=ink)
-        d.text((700, yb + 22), rupees(o["b"]), font=f_big, fill=ink)
+        d.text((96, 596), "STILL TO PAY", font=f_lab, fill=ink)
+        d.text((92, 636), rupees(o["b"]), font=f_big, fill=ink)
     else:
-        d.text((700, yb), "PENDING", font=f_lab, fill="#0B6B52")
-        d.text((700, yb + 22), "NIL", font=f_big, fill="#0B6B52")
+        d.text((96, 596), "PENDING", font=f_lab, fill="#0B6B52")
+        d.text((92, 636), "NIL", font=f_big, fill="#0B6B52")
 
-    d.line([70, 556, 1130, 556], fill="#EDF2F7", width=1)
-    d.text((70, 574), (BASE or "Ajanta Services Association").replace("https://", ""),
-           font=ImageFont.truetype(FONT_B, 23), fill="#8A9099")
+    # a bar showing how far the payment got
+    pct = 0 if o["dm"] <= 0 else max(0.0, min(1.0, o["p"] / o["dm"]))
+    d.rounded_rectangle([60, 856, 1140, 880], 12, fill="#F0D6CE" if o["b"] > 0 else "#D6EFE7")
+    if pct > 0:
+        d.rounded_rectangle([60, 856, 60 + int(1080 * pct), 880], 12, fill="#12A08A")
+
+    yb = 928
+    d.text((70,  yb), "BILL", font=f_lab, fill="#8A9099")
+    d.text((70,  yb + 36), rupees(o["dm"]), font=f_num, fill="#14171C")
+    d.text((520, yb), "PAID SO FAR", font=f_lab, fill="#8A9099")
+    d.text((520, yb + 36), rupees(o["p"]), font=f_num, fill="#0B6B52")
+
+    d.rectangle([0, 1056, W, HGT], fill="#FCFBF8")
+    d.line([70, 1076, 1130, 1076], fill="#E3E8EF", width=2)
+    d.text((70, 1104), "AJANTA SERVICES ASSOCIATION",
+           font=ImageFont.truetype(FONT_B, 25), fill="#5B7488")
+    d.text((70, 1144), (BASE or "").replace("https://", ""),
+           font=ImageFont.truetype(FONT_B, 23), fill="#9AA3B0")
     im.save(path, optimize=True)
 
 
@@ -169,7 +192,7 @@ OWNER_PAGE = """<!DOCTYPE html>
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{base}/o/{key}.png">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:height" content="1200">
 <meta property="og:url" content="{base}/o/{key}.html">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
