@@ -2203,7 +2203,7 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
     The design, code and layout of this website are proprietary to Shucart Enterprises
     and may not be copied, reproduced or reused without written permission.
     The accounts shown belong to Ajanta Services Association.</p>
-    <p class="bstamp">Build v134</p>
+    <p class="bstamp">Build v135</p>
     <div class="tally" id="tally" aria-label="Site activity">
       <b title="Site visits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.4 9.2h17.2M3.4 14.8h17.2"/><ellipse cx="12" cy="12" rx="4.1" ry="9"/></svg><span id="tVisits">—</span></b>
@@ -3769,10 +3769,18 @@ function medalSVG(cls){
 function waIcon(){
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1.9 2 1.2 2.3 1.4.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.6-.1 1.2z"/></svg>';
 }
+/* the panel is handed the raw DATA.own record, which has no key on it -
+   resolve it either way so no caller can produce o/undefined.html */
+function ownerKey(o){
+  if (o && o.k != null) return o.k;
+  for (const k in DATA.own) if (DATA.own[k] === o) return k;
+  if (o && o.n) for (const k in DATA.own) if (DATA.own[k].n === o.n) return k;
+  return "";
+}
 function ownerURL(o){
   let base = "";
   try { base = String(location.href).split("#")[0].split("?")[0].replace(/[^/]*$/, ""); } catch(e){}
-  return base + "o/" + o.k + ".html";
+  return base + "o/" + ownerKey(o) + ".html";
 }
 /* the message is deliberately three lines - WhatsApp's own preview card carries the figures */
 function waText(o){
