@@ -250,6 +250,7 @@ h1{{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(23px,6.2vw,30px);
 <p class="det">\u092f\u0939 \u092a\u0948\u0938\u093e \u0906\u092a\u0915\u0940 \u0905\u092a\u0928\u0940 \u0938\u0902\u092a\u0924\u094d\u0924\u093f \u0915\u0947 \u0930\u0916\u0930\u0916\u093e\u0935 \u0915\u093e \u0916\u0930\u094d\u091a \u0939\u0948 \u2014 \u0938\u092b\u093e\u0908, \u092c\u093f\u091c\u0932\u0940, \u092a\u093e\u0928\u0940 \u0914\u0930 \u092e\u0930\u092e\u094d\u092e\u0924\u0964<br>
 UPI: <b>{upi}</b><br>{bank}, A/c <b>{ac}</b>, IFSC <b>{ifsc}</b><br>
 <em>\u0930\u093f\u092e\u093e\u0930\u094d\u0915 \u092e\u0947\u0902 \u0905\u092a\u0928\u093e \u0926\u0941\u0915\u093e\u0928 \u0928\u0902\u092c\u0930 \u0905\u0935\u0936\u094d\u092f \u0932\u093f\u0916\u093f\u090f</em></p>
+<p style="margin-top:16px;padding-top:13px;border-top:1px solid #EDF2F7;font-size:11px;line-height:1.6;color:#8A9099">&#169; 2026 <b style="color:#5B7488">Shucart Enterprises</b>. All rights reserved. The design and code of this page are proprietary and may not be copied or reused without written permission.</p>
 <a class="full" href="{base}/">\u092a\u0942\u0930\u093e \u0939\u093f\u0938\u093e\u092c \u0926\u0947\u0916\u093f\u090f \u2014 \u0939\u0930 \u0930\u0941\u092a\u092f\u093e, \u0928\u093e\u092e \u0914\u0930 \u0924\u093e\u0930\u0940\u0916 \u0915\u0947 \u0938\u093e\u0925 \u2192</a>
 </div></div></body></html>
 """
