@@ -17,6 +17,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT  = os.path.join(ROOT, "_site")
 BASE = (sys.argv[1] if len(sys.argv) > 1 else "").rstrip("/")
+DATESTAMP = __import__("datetime").date.today().strftime("%y%m%d")
 
 PAY = dict(upi="ajanta1004@fbl", bank="Federal Bank", ac="26100200001004",
            ifsc="FDRL0002610", who="Chandan Dubey", phone="7007202574")
@@ -259,11 +260,19 @@ UPI: <b>{upi}</b><br>{bank}, A/c <b>{ac}</b>, IFSC <b>{ifsc}</b><br>
 def owner_page(key, o):
     ink, wash, label, accent = PAGE_TONE[band_of(o)]
 
+    # the note may hold only letters, digits and spaces, and must stay short -
+    # a bracket or a full stop in an owner's name is enough to fail the payment.
+    unit = re.sub(r"\s*\([^)]*\)", "", (o["u"] or "").split("\u00b7")[0]).strip()
+    note = re.sub(r"[^A-Za-z0-9 ]+", " ", "Maintenance " + unit)
+    note = re.sub(r"\s+", " ", note).strip()[:30]
+    ref  = "AJ" + str(key) + DATESTAMP
+
     def upi(scheme):
         return scheme + ("pa=" + quote(PAY["upi"]) +
                          "&pn=" + quote("Ajanta Services Association") +
                          "&cu=INR&am=" + str(int(o["b"])) +
-                         "&tn=" + quote("Maintenance " + o["n"]))
+                         "&tn=" + quote(note) +
+                         "&tr=" + quote(ref))
 
     if o["b"] > 0:
         title = "%s \u2014 %s \u092c\u093e\u0915\u0940 \u00B7 \u0905\u091c\u0902\u0924\u093e \u091f\u093e\u0935\u0930" % (o["n"], rupees(o["b"]))
@@ -321,7 +330,7 @@ def main():
     css = re.search(r"<style>(.*?)</style>", page, re.S).group(1)
     assert css.count("{") == css.count("}"), "stylesheet braces do not balance"
 
-    for name in ("story.html", "tower.html", "film.html"):
+    for name in ("story.html", "tower.html", "film.html", "howto.html", "upi-test.html"):
         src = os.path.join(ROOT, "src", name)
         if os.path.exists(src):
             shutil.copy(src, os.path.join(OUT, name))
