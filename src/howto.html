@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>अपनी दुकान कैसे देखें — अजंता टावर</title>
+<meta name="description" content="नक्शे में अपनी दुकान खोलने और भुगतान करने का तरीका, कदम दर कदम।">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#0B1220; --soft:#5B6478; --line:rgba(11,18,32,.10);
+  --red:#D24A2C; --redw:#FBDDD6; --green:#12A08A; --greenw:#DFF5EE;
+  --amber:#F5A524; --amberw:#FFF1D6; --navy:#141C2E;
+}
+html,body{margin:0;height:100%}
+body{
+  background:
+    radial-gradient(58% 46% at 16% 6%, rgba(94,148,255,.20), transparent 72%),
+    radial-gradient(52% 42% at 86% 2%, rgba(110,206,182,.19), transparent 72%),
+    linear-gradient(180deg,#EEF1F8,#C6D1E8);
+  font-family:"Noto Sans Devanagari","Plus Jakarta Sans",system-ui,sans-serif;
+  color:var(--ink);display:flex;align-items:center;justify-content:center;padding:18px}
+.stage{width:100%;max-width:430px}
+
+/* ---------- title ---------- */
+.head{text-align:center;margin-bottom:14px}
+.head .kick{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.head h1{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(21px,5.6vw,27px);
+  letter-spacing:-.025em;margin:6px 0 0;line-height:1.2}
+
+/* ---------- the phone ---------- */
+.phone{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;
+  padding:14px 13px 16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(11,18,32,.06),0 26px 50px -30px rgba(11,18,32,.75)}
+.scene{display:none}
+.scene.on{display:block;animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* floor tabs */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.tab{background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 4px;text-align:center;
+  transition:background .3s,color .3s,border-color .3s}
+.tab b{display:block;font-family:"Plus Jakarta Sans",sans-serif;font-size:13px}
+.tab small{display:block;font-size:9.5px;color:var(--soft);margin-top:1px}
+.tab.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.tab.sel small{color:rgba(255,255,255,.6)}
+
+/* the plan */
+.plan{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:11px 10px}
+.planhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.planhead b{font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;color:#0A7AB8}
+.pc{font-family:"Space Grotesk",monospace;font-size:11.5px;font-weight:700;
+  padding:3px 8px;border-radius:99px;background:var(--amberw);color:#7A4B05}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.u{aspect-ratio:1.25;border-radius:7px;border:1.5px solid var(--red);background:var(--redw);
+  display:grid;place-items:center;font-size:10.5px;font-weight:700;color:#8E2F16;
+  transition:background .45s,border-color .45s,color .45s,transform .3s}
+.u.g{border-color:var(--green);background:var(--greenw);color:#0B6B52}
+.u.a{border-color:var(--amber);background:var(--amberw);color:#7A4B05}
+.u.pick{transform:scale(1.14);box-shadow:0 0 0 3px rgba(11,18,32,.85)}
+
+/* the panel */
+.panel{margin-top:11px;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.plabel{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:#9E3F22;text-align:center}
+.pname{font-family:"Plus Jakarta Sans",sans-serif;font-size:20px;font-weight:800;
+  letter-spacing:-.02em;text-align:center;margin-top:5px;line-height:1.15}
+.paybtn{margin-top:12px;border-radius:13px;padding:13px;text-align:center;color:#fff;
+  background:linear-gradient(180deg,#E4573A,#C0391F);
+  box-shadow:0 1px 0 rgba(255,255,255,.28) inset,0 12px 24px -14px rgba(120,40,20,.9)}
+.paybtn b{display:block;font-family:"Space Grotesk",monospace;font-size:19px}
+.paybtn small{display:block;font-size:11px;opacity:.94;margin-top:3px}
+.apps{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.arow{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:11px;
+  padding:11px 13px;border-bottom:1px solid var(--line);font-size:14px;font-weight:700}
+.arow:last-child{border-bottom:0}
+.arow.sug{background:#F2FAFF}
+.mark{height:26px;border-radius:7px;display:grid;place-items:center;color:#fff;
+  font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;font-weight:800}
+.m1{background:#00A9E0}.m2{background:linear-gradient(135deg,#4285F4,#34A853)}.m3{background:#5F259F}
+.arow span{font-size:10px;font-weight:700;letter-spacing:.08em;color:#0A7AB8;display:block;margin-top:1px}
+
+/* the pointing hand */
+.hand{position:absolute;width:44px;height:44px;left:0;top:0;pointer-events:none;
+  opacity:0;transition:transform .75s cubic-bezier(.3,.9,.3,1),opacity .3s;z-index:5;
+  filter:drop-shadow(0 6px 10px rgba(11,18,32,.35))}
+.hand.show{opacity:1}
+.hand.press{transform:scale(.86) translate(var(--hx),var(--hy))!important}
+.ripple{position:absolute;width:34px;height:34px;border-radius:50%;border:2px solid rgba(11,18,32,.5);
+  pointer-events:none;opacity:0;z-index:4}
+.ripple.go{animation:rip .6s ease-out}
+@keyframes rip{0%{opacity:.9;transform:scale(.35)}100%{opacity:0;transform:scale(1.5)}}
+
+/* caption + progress */
+.cap{margin-top:14px;text-align:center;min-height:62px}
+.cap b{display:block;font-family:"Plus Jakarta Sans",sans-serif;font-size:17px;letter-spacing:-.015em}
+.cap p{margin:6px 0 0;font-size:13.5px;line-height:1.6;color:var(--soft)}
+.bar{margin-top:12px;display:flex;gap:5px}
+.bar i{flex:1;height:3px;border-radius:99px;background:rgba(11,18,32,.14);overflow:hidden;position:relative}
+.bar i em{position:absolute;inset:0;width:0;background:var(--navy);border-radius:99px}
+.bar i.done em{width:100%}
+.bar i.now em{animation:fill var(--dur) linear both}
+@keyframes fill{to{width:100%}}
+.foot{margin-top:12px;text-align:center}
+.replay{font:inherit;font-size:13px;font-weight:700;padding:9px 18px;border-radius:99px;
+  border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.replay:active{transform:scale(.96)}
+.mark-note{margin-top:10px;text-align:center;font-size:11px;color:var(--soft)}
+@media(prefers-reduced-motion:reduce){
+  .hand,.ripple{display:none}
+  .scene.on{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="head">
+    <div class="kick">अजंता टावर · खुला हिसाब</div>
+    <h1 id="title">अपनी दुकान कैसे देखें</h1>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="ripple" id="ripple"></div>
+    <svg class="hand" id="hand" viewBox="0 0 44 44" aria-hidden="true">
+      <path d="M18 6.5c0-1.9 1.5-3.4 3.4-3.4s3.4 1.5 3.4 3.4v12.2c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7v2c0-1.4 1.2-2.6 2.6-2.6s2.6 1.2 2.6 2.6v2.1c0-1.3 1.1-2.4 2.4-2.4s2.4 1.1 2.4 2.4v8.4c0 6.1-4.9 11-11 11h-4.7c-3.2 0-6.2-1.6-8-4.3l-6.3-9.6c-.9-1.4-.5-3.3.9-4.2 1.3-.9 3.1-.6 4.1.6l3.4 4.2V6.5z"
+            fill="#fff" stroke="#0B1220" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+
+    <!-- 1. pick a floor -->
+    <div class="scene on" id="s1">
+      <div class="tabs">
+        <div class="tab" data-t="0"><b>LGF</b><small>निचला तल</small></div>
+        <div class="tab" data-t="1"><b>UGF</b><small>ऊपरी तल</small></div>
+        <div class="tab" data-t="2"><b>FF</b><small>पहली मंज़िल</small></div>
+        <div class="tab" data-t="3"><b>SF</b><small>दूसरी मंज़िल</small></div>
+      </div>
+      <div class="plan" style="opacity:.35">
+        <div class="planhead"><b>ऊपरी तल</b><span class="pc">58%</span></div>
+        <div class="grid" id="g1"></div>
+      </div>
+    </div>
+
+    <!-- 2. tap your shop -->
+    <div class="scene" id="s2">
+      <div class="tabs">
+        <div class="tab"><b>LGF</b><small>निचला तल</small></div>
+        <div class="tab sel"><b>UGF</b><small>ऊपरी तल</small></div>
+        <div class="tab"><b>FF</b><small>पहली मंज़िल</small></div>
+        <div class="tab"><b>SF</b><small>दूसरी मंज़िल</small></div>
+      </div>
+      <div class="plan">
+        <div class="planhead"><b>ऊपरी तल</b><span class="pc">58%</span></div>
+        <div class="grid" id="g2"></div>
+      </div>
+    </div>
+
+    <!-- 3. the panel -->
+    <div class="scene" id="s3">
+      <div class="plan">
+        <div class="planhead"><b>ऊपरी तल</b><span class="pc">58%</span></div>
+        <div class="grid" id="g3"></div>
+      </div>
+      <div class="panel">
+        <div class="plabel">बकाया</div>
+        <div class="pname">आपका नाम</div>
+      </div>
+    </div>
+
+    <!-- 4. the pay button -->
+    <div class="scene" id="s4">
+      <div class="panel">
+        <div class="plabel">बकाया</div>
+        <div class="pname">आपका नाम</div>
+        <div class="paybtn"><b>Pay ₹11,760</b><small>Turn your shop green too</small></div>
+      </div>
+    </div>
+
+    <!-- 5. choose an app -->
+    <div class="scene" id="s5">
+      <div class="panel">
+        <div class="plabel">किस ऐप से भेजें</div>
+        <div class="apps">
+          <div class="arow sug"><div class="mark m1">P</div><div>Paytm<span>सुझाया गया</span></div><div>→</div></div>
+          <div class="arow"><div class="mark m2">G</div><div>Google Pay</div><div>→</div></div>
+          <div class="arow"><div class="mark m3">₹</div><div>PhonePe</div><div>→</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. it turns green -->
+    <div class="scene" id="s6">
+      <div class="plan">
+        <div class="planhead"><b>ऊपरी तल</b><span class="pc" style="background:var(--greenw);color:#0B6B52">64%</span></div>
+        <div class="grid" id="g6"></div>
+      </div>
+      <div class="panel" style="text-align:center">
+        <div class="plabel" style="color:#0B6B52">पूरा भुगतान हो चुका</div>
+        <div class="pname" style="color:#0B6B52">धन्यवाद</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cap" id="cap"></div>
+  <div class="bar" id="bar"></div>
+  <div class="foot">
+    <button class="replay" id="replay" type="button">फिर से देखें</button>
+    <p class="mark-note">अजंता सर्विसेज़ एसोसिएशन</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LABELS = ["16","17","18","19","20","22","15","14","12","13","11","10",
+                "09","08","07","30","31","32","01","02","03","04","05","06"];
+  var STATE  = {"18":"g","30":"g","31":"g","09":"a","08":"a","03":"g","04":"a","06":"g"};
+  var PICK   = "17";
+
+  function fill(id, opts){
+    var g = document.getElementById(id);
+    if (!g) return;
+    g.innerHTML = "";
+    LABELS.forEach(function(n){
+      var d = document.createElement("div");
+      var s = (opts && opts.green === n) ? "g" : (STATE[n] || "");
+      d.className = "u" + (s ? " " + s : "");
+      if (opts && opts.pick === n) d.className += " pick";
+      d.textContent = n;
+      d.dataset.n = n;
+      g.appendChild(d);
+    });
+  }
+  fill("g1"); fill("g2"); fill("g3", {pick: PICK}); fill("g6", {green: PICK, pick: PICK});
+
+  var STEPS = [
+    {id:"s1", dur:3400, t:"पहले अपना तल चुनिए",
+     p:"चार तल हैं — निचला, ऊपरी, पहली और दूसरी मंज़िल। अपनी दुकान जिस तल पर है, उस पर दबाइए।",
+     tap:function(){ return document.querySelector('#s1 .tab[data-t="1"]'); },
+     after:function(){ var t = document.querySelector('#s1 .tab[data-t="1"]'); if (t) t.classList.add("sel"); }},
+
+    {id:"s2", dur:3600, t:"फिर अपनी दुकान दबाइए",
+     p:"नक्शा उसी तल का है। हर रंग बताता है कि उस दुकान का कितना भुगतान हुआ है।",
+     tap:function(){ return document.querySelector('#g2 [data-n="' + PICK + '"]'); }},
+
+    {id:"s3", dur:3400, t:"आपका नाम, आपका बकाया",
+     p:"नीचे उसी दुकान का पूरा ब्यौरा खुल जाता है — मालिक कौन है, बिल कितना बना और कितना बाकी है।"},
+
+    {id:"s4", dur:3600, t:"भुगतान का बटन",
+     p:"रकम पहले से भरी होती है। आपको कुछ लिखना नहीं है — बस दबाना है।",
+     tap:function(){ return document.querySelector('#s4 .paybtn'); }},
+
+    {id:"s5", dur:3600, t:"अपना ऐप चुनिए",
+     p:"Paytm, Google Pay या PhonePe — जिससे आप भेजते हैं। रकम और दुकान नंबर अपने आप चले जाते हैं।",
+     tap:function(){ return document.querySelector('#s5 .arow.sug'); }},
+
+    {id:"s6", dur:4200, t:"और आपकी दुकान हरी हो जाती है",
+     p:"भुगतान दर्ज होते ही नक्शे में आपकी दुकान का रंग बदल जाता है, और उस तल का प्रतिशत भी बढ़ जाता है।"}
+  ];
+
+  var phone  = document.getElementById("phone");
+  var hand   = document.getElementById("hand");
+  var ripple = document.getElementById("ripple");
+  var cap    = document.getElementById("cap");
+  var bar    = document.getElementById("bar");
+  var timers = [];
+
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+
+  bar.innerHTML = STEPS.map(function(){ return "<i><em></em></i>"; }).join("");
+
+  function moveHand(el, then){
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      if (then) later(then, 200);
+      return;
+    }
+    var pr = phone.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var x = r.left - pr.left + r.width / 2 - 12;
+    var y = r.top  - pr.top  + r.height / 2 - 6;
+    hand.style.setProperty("--hx", "0px");
+    hand.style.setProperty("--hy", "0px");
+    hand.style.transform = "translate(" + x + "px," + y + "px)";
+    hand.classList.add("show");
+    later(function(){
+      hand.style.transform = "translate(" + x + "px," + y + "px) scale(.86)";
+      ripple.style.left = (x - 4) + "px";
+      ripple.style.top  = (y - 6) + "px";
+      ripple.classList.remove("go");
+      void ripple.offsetWidth;
+      ripple.classList.add("go");
+      later(function(){
+        hand.style.transform = "translate(" + x + "px," + y + "px)";
+        if (then) then();
+      }, 260);
+    }, 820);
+  }
+
+  function show(i){
+    STEPS.forEach(function(s, n){
+      var el = document.getElementById(s.id);
+      if (el) el.classList.toggle("on", n === i);
+      var seg = bar.children[n];
+      seg.classList.toggle("done", n < i);
+      seg.classList.toggle("now", n === i);
+      if (n === i) seg.style.setProperty("--dur", STEPS[i].dur + "ms");
+      if (n > i){ seg.classList.remove("done", "now"); }
+    });
+    var s = STEPS[i];
+    cap.innerHTML = "<b>" + s.t + "</b><p>" + s.p + "</p>";
+    hand.classList.remove("show");
+    if (s.tap){
+      later(function(){ moveHand(s.tap(), s.after); }, 500);
+    }
+    later(function(){
+      if (i + 1 < STEPS.length) show(i + 1);
+      else { hand.classList.remove("show"); }
+    }, s.dur);
+  }
+
+  function start(){
+    clearTimers();
+    fill("g1"); fill("g2"); fill("g3", {pick: PICK}); fill("g6", {green: PICK, pick: PICK});
+    var t = document.querySelector('#s1 .tab[data-t="1"]');
+    if (t) t.classList.remove("sel");
+    Array.prototype.forEach.call(bar.children, function(c){ c.classList.remove("done", "now"); });
+    show(0);
+  }
+
+  document.getElementById("replay").addEventListener("click", start);
+  start();
+})();
+</script>
+</body>
+</html>
