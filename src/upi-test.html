@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>₹1 UPI test — Ajanta</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:20px 16px 40px;background:#F4F6FA;color:#0B1220;
+  font-family:"Plus Jakarta Sans",system-ui,sans-serif;display:flex;justify-content:center}
+.wrap{width:100%;max-width:460px}
+h1{font-size:22px;letter-spacing:-.02em;margin:0}
+.sub{color:#5B6478;font-size:13.5px;line-height:1.6;margin:8px 0 0}
+.card{background:#fff;border:1px solid rgba(11,18,32,.10);border-radius:16px;padding:15px;margin-top:14px;
+  box-shadow:0 1px 2px rgba(11,18,32,.05)}
+.tag{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8A9099}
+.card h2{font-size:15.5px;margin:5px 0 3px;letter-spacing:-.01em}
+.what{font-size:12.5px;color:#5B6478;line-height:1.55;margin:0 0 12px}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row a{display:block;text-align:center;text-decoration:none;font-size:13px;font-weight:700;
+  padding:11px 6px;border-radius:11px;border:1px solid rgba(11,18,32,.12);color:#0B1220;background:#FBFCFE}
+.row a:active{transform:scale(.96)}
+.row a.pt{border-color:#9FDCF4;background:#F2FBFF}
+.raw{margin-top:11px;font-family:"Space Grotesk",monospace;font-size:10.5px;line-height:1.6;
+  color:#8A9099;word-break:break-all;background:#FAFBFD;border-radius:9px;padding:9px 10px}
+.note{margin-top:18px;padding:13px 15px;border-radius:13px;background:#FFF8E8;
+  border:1px solid #EBD9A6;font-size:13px;line-height:1.65;color:#6E5410}
+.note b{display:block;margin-bottom:5px}
+ol{margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.7;color:#5B6478}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>₹1 UPI test</h1>
+  <p class="sub">Four kinds of link, each in all three apps. Try them in order and note
+  which ones go through — whichever one fails tells us exactly which field UPI is
+  rejecting. Every link is for <b>₹1</b> to ajanta1004@fbl.</p>
+
+  <div class="card">
+    <div class="tag">Test A</div>
+    <h2>Everything, cleaned</h2>
+    <p class="what">Note and reference both present, note contains only letters, digits
+    and spaces. This is what the site sends now.</p>
+    <div class="row">
+      <a class="pt" href="paytmmp://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038&tr=AJTESTA01">Paytm</a>
+      <a href="tez://upi/pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038&tr=AJTESTA01">GPay</a>
+      <a href="phonepe://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038&tr=AJTESTA01">PhonePe</a>
+    </div>
+    <div class="raw">pa · pn · cu · am=1 · tn=Maintenance UGF 38 · tr=AJTESTA01</div>
+  </div>
+
+  <div class="card">
+    <div class="tag">Test B</div>
+    <h2>Without the reference</h2>
+    <p class="what">Same as A but no <b>tr</b>. If A works and B fails, the reference was
+    the missing piece.</p>
+    <div class="row">
+      <a class="pt" href="paytmmp://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038">Paytm</a>
+      <a href="tez://upi/pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038">GPay</a>
+      <a href="phonepe://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038">PhonePe</a>
+    </div>
+    <div class="raw">pa · pn · cu · am=1 · tn=Maintenance UGF 38</div>
+  </div>
+
+  <div class="card">
+    <div class="tag">Test C</div>
+    <h2>The old note, with a full stop and brackets</h2>
+    <p class="what">This is what the site sent BEFORE today's fix. If this is the one
+    that fails, the note was the whole problem and the fix is right.</p>
+    <div class="row">
+      <a class="pt" href="paytmmp://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20Amit%20Kr.%20Kejriwal%20(UGF%2038)">Paytm</a>
+      <a href="tez://upi/pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20Amit%20Kr.%20Kejriwal%20(UGF%2038)">GPay</a>
+      <a href="phonepe://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20Amit%20Kr.%20Kejriwal%20(UGF%2038)">PhonePe</a>
+    </div>
+    <div class="raw">tn=Maintenance Amit Kr. Kejriwal (UGF 38)</div>
+  </div>
+
+  <div class="card">
+    <div class="tag">Test D</div>
+    <h2>Bare minimum</h2>
+    <p class="what">Only the account, the amount and the currency. No note, no name, no
+    reference. If even this fails, the fault is not in the link at all — it is the
+    account or the app.</p>
+    <div class="row">
+      <a class="pt" href="paytmmp://pay?pa=ajanta1004@fbl&cu=INR&am=1">Paytm</a>
+      <a href="tez://upi/pay?pa=ajanta1004@fbl&cu=INR&am=1">GPay</a>
+      <a href="phonepe://pay?pa=ajanta1004@fbl&cu=INR&am=1">PhonePe</a>
+    </div>
+    <div class="raw">pa · cu · am=1</div>
+  </div>
+
+  <div class="card">
+    <div class="tag">Test E</div>
+    <h2>Whatever app the phone picks</h2>
+    <p class="what">The plain <b>upi://</b> scheme. On your phone WhatsApp Pay took this
+    over once — worth seeing what it does now.</p>
+    <div class="row" style="grid-template-columns:1fr">
+      <a href="upi://pay?pa=ajanta1004@fbl&pn=Ajanta%20Services%20Association&cu=INR&am=1&tn=Maintenance%20UGF%2038&tr=AJTESTE01">Open with any UPI app</a>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>What to tell me afterwards</b>
+    <ol>
+      <li>Which tests went through, and which failed.</li>
+      <li>For a failure: the exact words on the screen, and which app.</li>
+      <li>Whether the amount and the note appeared correctly before you pressed pay.</li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>
