@@ -13,6 +13,7 @@ the workflow passes it in automatically, so nothing here needs editing by hand.
 import json, os, re, shutil, sys, html as H
 from urllib.parse import quote
 from PIL import Image, ImageDraw, ImageFont
+import qr as qrlib
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT  = os.path.join(ROOT, "_site")
@@ -233,6 +234,13 @@ h1{{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(23px,6.2vw,30px);
 .apps small{{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;
   text-transform:uppercase;color:#0A7AB8;margin-top:2px}}
 .apps span.go{{font-family:"Space Grotesk",monospace;color:#8A9099;font-size:17px}}
+.qrb{{margin-top:16px;padding:14px;border:1px solid #E6EAF0;border-radius:14px;text-align:center;background:#FCFDFF}}
+.qrb b{{display:block;font-size:14.5px;font-weight:700;color:#0B1220}}
+.qrb span{{display:block;font-size:12px;color:#5B7488;margin:4px 0 11px;line-height:1.5}}
+.qrb img{{width:100%;max-width:200px;height:auto;display:block;margin:0 auto;image-rendering:pixelated;
+  border:1px solid #EDF2F7;border-radius:8px}}
+.orsep{{margin:13px 0 0;text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:#9AA3B0}}
 .det{{margin-top:16px;border-top:1px solid #EDF2F7;padding-top:14px;font-size:13px;line-height:1.75;color:#3A4560}}
 .det b{{color:#0B1220;font-family:"Space Grotesk",monospace}}
 .full{{display:block;text-align:center;margin-top:18px;font-size:13.5px;font-weight:700;color:#2E8BC0;text-decoration:none}}
@@ -285,7 +293,11 @@ def owner_page(key, o):
             return ('<a class="' + cls + '" href="' + upi(scheme) + '">'
                     '<img src="' + logo + '" alt="' + name + '">'
                     '<b>' + name + extra + '</b><span class="go">\u2192</span></a>')
-        action = ('<a class="btn" href="' + upi("upi://pay?") + '">' + rupees(o["b"]) +
+        action = ('<div class="qrb"><b>\u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u0947 \u0932\u093f\u090f \u092f\u0939 QR \u0938\u094d\u0915\u0948\u0928 \u0915\u0940\u091c\u093f\u090f</b>'
+                  '<span>\u0915\u094b\u0908 \u092d\u0940 UPI \u0910\u092a \u0916\u094b\u0932\u093f\u090f \u2014 \u0930\u0915\u092e \u092a\u0939\u0932\u0947 \u0938\u0947 \u092d\u0930\u0940 \u0939\u0941\u0908 \u0906\u090f\u0917\u0940\u0964</span>'
+                  '<img src="' + BASE + '/o/qr-' + str(key) + '.png" alt="UPI QR"></div>'
+                  '<p class="orsep">\u092f\u093e \u0938\u0940\u0927\u0947 \u0915\u094b\u0908 \u0910\u092a \u0916\u094b\u0932\u093f\u090f</p>'
+                  '<a class="btn" href="' + upi("upi://pay?") + '">' + rupees(o["b"]) +
                   ' \u0915\u093e \u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u0930\u0947\u0902</a>'
                   '<div class="apps">'
                   + row("sug", "paytmmp://pay?", APP_LOGO["pt"], "Paytm",
@@ -330,16 +342,34 @@ def main():
     css = re.search(r"<style>(.*?)</style>", page, re.S).group(1)
     assert css.count("{") == css.count("}"), "stylesheet braces do not balance"
 
-    for name in ("story.html", "tower.html", "film.html", "howto.html", "upi-test.html"):
+    for name in ("story.html", "tower.html", "film.html", "howto.html", "upi-test.html", "upi-test2.html"):
         src = os.path.join(ROOT, "src", name)
         if os.path.exists(src):
             shutil.copy(src, os.path.join(OUT, name))
 
     front_image(data["totals"], own, os.path.join(OUT, "preview.png"))
 
+    made_qr = 0
     for key, o in own.items():
         open(os.path.join(OUT, "o", "%s.html" % key), "w", encoding="utf-8").write(owner_page(key, o))
         owner_image(key, o, os.path.join(OUT, "o", "%s.png" % key))
+        # each owner who still owes gets a QR with their own amount already in it.
+        # Every one is decoded again before it ships - a QR nobody can read is worse
+        # than no QR at all.
+        if o["b"] > 0:
+            unit = re.sub(r"\s*\([^)]*\)", "", (o["u"] or "").split("\u00b7")[0]).strip()
+            note = re.sub(r"[^A-Za-z0-9 ]+", " ", "Maintenance " + unit)
+            note = re.sub(r"\s+", " ", note).strip()[:30]
+            s = ("upi://pay?pa=" + quote(PAY["upi"]) +
+                 "&pn=" + quote("Ajanta Services Association") +
+                 "&cu=INR&am=" + str(int(o["b"])) + "&tn=" + quote(note))
+            mat, ver, mask = qrlib.encode(s, "M")
+            path = os.path.join(OUT, "o", "qr-%s.png" % key)
+            qrlib.to_png(mat, path, scale=6, quiet=3)
+            if qrlib.decode(qrlib.matrix_from_png(path)) != s:
+                raise SystemExit("QR for owner %s does not read back correctly" % key)
+            made_qr += 1
+    print("  %d payment QRs written and each one decoded again" % made_qr)
 
     # a ready message per owner, so nothing has to be typed
     lines = ["READY-TO-SEND WHATSAPP MESSAGES", "Har owner ka apna link.", "", "=" * 60, ""]
