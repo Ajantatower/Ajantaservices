@@ -1,5 +1,7 @@
 name: Build and publish
 
+# Runs whenever anything is pushed, and can also be started by hand
+# from the Actions tab.
 on:
   push:
     branches: [main]
@@ -19,13 +21,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - id: pages
+
+      - name: Work out this site's own address
+        id: pages
         uses: actions/configure-pages@v5
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install --quiet pillow
-      - run: python3 build.py "${{ steps.pages.outputs.base_url }}"
+
+      - name: Install what the build needs
+        run: pip install --quiet pillow reportlab
+
+      - name: Build the site
+        run: python3 build.py "${{ steps.pages.outputs.base_url }}"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
