@@ -138,9 +138,36 @@ JS = """
       shareLink(url, title, "");
     }).catch(function(){ shareLink(url, title, ""); });
   }
+  function saveImage(url, name, title){
+    /* iPhone ignores the download attribute - Safari just opens the picture. The
+       only route into the camera roll is the share sheet, which carries a Save
+       Image item. Android takes the plain download, so try that second. */
+    if (navigator.canShare){
+      fetch(url).then(function(r){ return r.blob(); }).then(function(b){
+        var f = new File([b], name, {type: b.type || "image/png"});
+        if (navigator.canShare({files:[f]})) return navigator.share({files:[f], title:title});
+        plainDownload(url, name);
+      }).catch(function(){ plainDownload(url, name); });
+    } else {
+      plainDownload(url, name);
+    }
+  }
+  function plainDownload(url, name){
+    var a = document.createElement("a");
+    a.href = url; a.download = name; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ say("तस्वीर पर देर तक दबाकर सेव कीजिए"); }, 900);
+  }
   document.addEventListener("click", function(ev){
     var t = ev.target && ev.target.closest ? ev.target : null;
     if (!t) return;
+    var sv = t.closest("[data-savefile]");
+    if (sv){
+      ev.preventDefault();
+      saveImage(sv.getAttribute("data-savefile"), sv.getAttribute("data-name") || "qr.png",
+                sv.getAttribute("data-title") || document.title);
+      return;
+    }
     var c = t.closest("[data-copy]");
     if (c){ copy(c.getAttribute("data-copy"), c); return; }
     var f = t.closest("[data-sharefile]");
@@ -229,7 +256,8 @@ QR_BLOCK = """    <div class="qr">
       <img src="{base}/o/qr-{key}.png" alt="UPI QR" width="190" height="190">
       <p>किसी भी UPI ऐप से स्कैन कीजिए — <b>{due}</b> पहले से भरी हुई आएगी।</p>
       <div class="acts">
-        <a class="btn" href="{base}/o/qrcard-{key}.png" download="ajanta-{key}-qr.png">{down}QR सेव</a>
+        <button class="btn" type="button" data-savefile="{base}/o/qrcard-{key}.png"
+                data-name="ajanta-{key}-qr.png" data-title="{sharetitle}">{down}QR सेव</button>
         <button class="btn" type="button" data-share="{base}/o/{key}.html"
                 data-title="{sharetitle}" data-text="{sharetext}">{share}भेजिए</button>
       </div>
@@ -244,7 +272,7 @@ BILLS_BLOCK = """    <details>
 """
 
 BILL_ROW = """      <div class="bill"><b>{label}</b>
-        <a class="ic" href="{url}" download title="डाउनलोड">{down}</a>
+        <a class="ic" href="{url}" download target="_blank" rel="noopener" title="खोलिए">{down}</a>
         <button class="ic" type="button" data-sharefile="{url}" data-name="{fname}"
                 data-title="{title}" title="भेजिए">{share}</button></div>
 """
