@@ -14,11 +14,21 @@ import json, os, re, shutil, sys, html as H
 from urllib.parse import quote
 from PIL import Image, ImageDraw, ImageFont
 import qr as qrlib
+import invoice as inv
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT  = os.path.join(ROOT, "_site")
 BASE = (sys.argv[1] if len(sys.argv) > 1 else "").rstrip("/")
 DATESTAMP = __import__("datetime").date.today().strftime("%y%m%d")
+
+# Quarters that have been billed, newest last.
+#   key, label printed on the invoice, invoice date, month and year for the number
+QUARTERS = [
+    ("2026Q1", "JANUARY TO MARCH 2026", "15-Feb-26", "0226"),
+    ("2026Q2", "APRIL TO JUNE 2026",    "15-May-26", "0526"),
+]
+QMY = {q[0]: q[3] for q in QUARTERS}
+SERIALS = {}          # filled in main(): quarter -> {party key: 1, 2, 3, ...}
 
 PAY = dict(upi="ajanta1004@fbl", bank="Federal Bank", ac="26100200001004",
            ifsc="FDRL0002610", who="Chandan Dubey", phone="7007202574")
@@ -34,6 +44,28 @@ FONT_R = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
 
 # ---------------------------------------------------------------- helpers
+def fy_quarter(qkey):
+    """Indian financial year runs April to March, so Jan-Mar 2026 is FY 25-26, Q4."""
+    y, q = int(qkey[:4]), int(qkey[-1])
+    fyq = {1: 4, 2: 1, 3: 2, 4: 3}[q]
+    start = y - 1 if q == 1 else y
+    return "%02d-%02d/Q%d" % (start % 100, (start + 1) % 100, fyq)
+
+
+def invoice_no(qkey, party_key):
+    """Month and year, then a serial that starts at 1 for every quarter.
+
+    The month in front is what keeps it unique: a serial on its own would repeat
+    each quarter, but 05/26 no. 1 and 08/26 no. 1 are different invoices and always
+    will be. The serial follows the register's own order, so rebuilding the same
+    quarter produces the same number for the same party rather than a new one.
+    """
+    n = SERIALS.get(qkey, {}).get(str(party_key))
+    if n is None:
+        return "AJ/%s/%s" % (QMY.get(qkey, qkey), str(party_key).zfill(2))
+    return "AJ/%s/%02d" % (QMY.get(qkey, qkey), n)
+
+
 def rupees(n):
     s = str(abs(int(n)))
     if len(s) > 3:
@@ -188,133 +220,137 @@ def front_image(totals, own, path):
 
 
 # ---------------------------------------------------------------- owner pages
-OWNER_PAGE = """<!DOCTYPE html>
-<html lang="hi"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}</title>
-<meta name="description" content="{desc}">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Ajanta Services Association">
-<meta property="og:title" content="{title}">
-<meta property="og:description" content="{desc}">
-<meta property="og:image" content="{base}/o/{key}.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="1200">
-<meta property="og:url" content="{base}/o/{key}.html">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
-<style>
-*{{box-sizing:border-box}}
-body{{margin:0;background:linear-gradient(180deg,#FCFBF8,#EFF3FA);min-height:100vh;
-  font-family:"Noto Sans Devanagari",system-ui,sans-serif;color:#0B1220;
-  padding:26px 18px 40px;display:flex;justify-content:center}}
-.card{{width:100%;max-width:520px;background:#fff;border:1px solid rgba(11,18,32,.09);border-radius:18px;
-  overflow:hidden;box-shadow:0 1px 2px rgba(11,18,32,.05),0 20px 40px -28px rgba(11,18,32,.55)}}
-.top{{background:{wash};padding:15px 20px;border-bottom:1px solid rgba(0,0,0,.05)}}
-.top b{{font-size:11px;letter-spacing:.13em;color:{ink};font-weight:700}}
-.pad{{padding:20px}}
-h1{{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(23px,6.2vw,30px);margin:0;line-height:1.16;letter-spacing:-.02em}}
-.u{{color:#5B7488;font-size:13px;margin:8px 0 0;line-height:1.5}}
-.grid{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;
-  border-top:1px solid #EDF2F7;padding-top:16px}}
-.k{{font-size:10.5px;letter-spacing:.1em;color:#8A9099;font-weight:700;text-transform:uppercase}}
-.v{{font-family:"Space Grotesk",monospace;font-weight:700;font-size:20px;margin-top:4px}}
-.due{{grid-column:1/-1;background:{wash};border-radius:14px;padding:14px 16px;margin-top:2px}}
-.due .v{{font-size:clamp(30px,9vw,40px);color:{ink}}}
-.btn{{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:16px;
-  padding:15px;border-radius:13px;background:{accent};color:#fff;margin-top:16px}}
-.apps{{display:grid;gap:8px;margin-top:10px}}
-.apps a{{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:center;
-  text-decoration:none;font-weight:700;font-size:15px;padding:11px 14px;border-radius:12px;
-  border:1px solid #D5DAE3;color:#0B1220;background:#fff}}
-.apps a.sug{{background:linear-gradient(180deg,#F4FBFF,#EAF6FE);border-color:#BFE0F5}}
-.apps img{{width:58px;height:32px;object-fit:contain;display:block}}
-.apps small{{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;color:#0A7AB8;margin-top:2px}}
-.apps span.go{{font-family:"Space Grotesk",monospace;color:#8A9099;font-size:17px}}
-.qrb{{margin-top:16px;padding:14px;border:1px solid #E6EAF0;border-radius:14px;text-align:center;background:#FCFDFF}}
-.qrb b{{display:block;font-size:14.5px;font-weight:700;color:#0B1220}}
-.qrb span{{display:block;font-size:12px;color:#5B7488;margin:4px 0 11px;line-height:1.5}}
-.qrb img{{width:100%;max-width:200px;height:auto;display:block;margin:0 auto;image-rendering:pixelated;
-  border:1px solid #EDF2F7;border-radius:8px}}
-.qrb em{{display:block;font-style:normal;margin-top:9px;font-size:11px;line-height:1.5;color:#8A9099}}
-.det{{margin-top:16px;border-top:1px solid #EDF2F7;padding-top:14px;font-size:13px;line-height:1.75;color:#3A4560}}
-.det b{{color:#0B1220;font-family:"Space Grotesk",monospace}}
-.full{{display:block;text-align:center;margin-top:18px;font-size:13.5px;font-weight:700;color:#2E8BC0;text-decoration:none}}
-</style></head>
-<body><div class="card">
-<div class="top"><b>\u0905\u091c\u0902\u0924\u093e \u091f\u093e\u0935\u0930 \u00B7 {label}</b></div>
-<div class="pad">
-<h1>{name}</h1>
-<p class="u">{units}</p>
-<div class="grid">
-  <div><div class="k">\u092c\u093f\u0932 \u0930\u093e\u0936\u093f</div><div class="v">{billed}</div></div>
-  <div><div class="k">\u091c\u092e\u093e</div><div class="v" style="color:#0B6B52">{paid}</div></div>
-  <div class="due"><div class="k" style="color:{ink}">{duelabel}</div><div class="v">{due}</div></div>
-</div>
-{action}
-<p class="det">\u092f\u0939 \u092a\u0948\u0938\u093e \u0906\u092a\u0915\u0940 \u0905\u092a\u0928\u0940 \u0938\u0902\u092a\u0924\u094d\u0924\u093f \u0915\u0947 \u0930\u0916\u0930\u0916\u093e\u0935 \u0915\u093e \u0916\u0930\u094d\u091a \u0939\u0948 \u2014 \u0938\u092b\u093e\u0908, \u092c\u093f\u091c\u0932\u0940, \u092a\u093e\u0928\u0940 \u0914\u0930 \u092e\u0930\u092e\u094d\u092e\u0924\u0964<br>
-UPI: <b>{upi}</b><br>{bank}, A/c <b>{ac}</b>, IFSC <b>{ifsc}</b><br>
-<em>\u0930\u093f\u092e\u093e\u0930\u094d\u0915 \u092e\u0947\u0902 \u0905\u092a\u0928\u093e \u0926\u0941\u0915\u093e\u0928 \u0928\u0902\u092c\u0930 \u0905\u0935\u0936\u094d\u092f \u0932\u093f\u0916\u093f\u090f</em></p>
-<p style="margin-top:16px;padding-top:13px;border-top:1px solid #EDF2F7;font-size:11px;line-height:1.6;color:#8A9099">&#169; 2026 <b style="color:#5B7488">Shucart Enterprises</b>. All rights reserved. The design and code of this page are proprietary and may not be copied or reused without written permission.</p>
-<a class="full" href="{base}/">\u092a\u0942\u0930\u093e \u0939\u093f\u0938\u093e\u092c \u0926\u0947\u0916\u093f\u090f \u2014 \u0939\u0930 \u0930\u0941\u092a\u092f\u093e, \u0928\u093e\u092e \u0914\u0930 \u0924\u093e\u0930\u0940\u0916 \u0915\u0947 \u0938\u093e\u0925 \u2192</a>
-</div></div></body></html>
-"""
+import ownerpage
+
+
+def qr_card(key, o, qr_matrix, path):
+    """The image people actually save and forward.
+
+    A bare QR square tells whoever receives it nothing - not who it is for, not how
+    much, not who is asking. This is the QR with all of that around it, so it stands
+    on its own in a WhatsApp thread. The canvas is measured to the content first,
+    because a card with a hand's width of blank at the bottom looks unfinished.
+    """
+    W = 1000
+    ink, wash, label = IMG_TONE[band_of(o)]
+    scratch = ImageDraw.Draw(Image.new("RGB", (W, 10)))
+
+    size = 46
+    while size > 26:
+        f_name = ImageFont.truetype(FONT_B, size)
+        if len(wrap(scratch, o["n"], f_name, 890)) <= 2:
+            break
+        size -= 3
+    name_lines = wrap(scratch, o["n"], f_name, 890)[:2]
+    f_u = ImageFont.truetype(FONT_R, 25)
+    unit_lines = wrap(scratch, (o["u"] or ""), f_u, 890)[:2]
+
+    y_name = 196
+    y = y_name + len(name_lines) * int(size * 1.18)
+    y_units = y + 6
+    y = y_units + len(unit_lines) * 34
+
+    top = y + 22
+    mods = len(qr_matrix)
+    scale = 560 // (mods + 6)
+    side = (mods + 6) * scale
+    qy = top + 214
+    cy = qy + side + 44
+    HT = cy + 78 + 34 + 96
+
+    im = Image.new("RGB", (W, HT), "#FFFFFF")
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, W, 10], fill=ink)
+    d.rectangle([0, 10, W, 150], fill=wash)
+    d.text((56, 44), "AJANTA TOWER", font=ImageFont.truetype(FONT_B, 30), fill=ink)
+    d.text((56, 92), "MAINTENANCE PAYMENT", font=ImageFont.truetype(FONT_B, 22), fill=ink)
+
+    yy = y_name
+    for line in name_lines:
+        d.text((56, yy), line, font=f_name, fill="#14171C")
+        yy += int(size * 1.18)
+    yy = y_units
+    for line in unit_lines:
+        d.text((56, yy), line, font=f_u, fill="#5B7488")
+        yy += 34
+
+    d.rounded_rectangle([46, top, W - 46, top + 168], 22, fill=wash)
+    d.text((78, top + 26), "AMOUNT TO PAY", font=ImageFont.truetype(FONT_B, 23), fill=ink)
+    d.text((74, top + 62), rupees(o["b"]), font=ImageFont.truetype(FONT_B, 88), fill=ink)
+
+    qx = (W - side) // 2
+    d.rounded_rectangle([qx - 16, qy - 16, qx + side + 16, qy + side + 16], 20,
+                        fill="#FFFFFF", outline="#E6EBF2", width=2)
+    for r in range(mods):
+        for c in range(mods):
+            if qr_matrix[r][c]:
+                x = qx + (c + 3) * scale
+                ty = qy + (r + 3) * scale
+                d.rectangle([x, ty, x + scale - 1, ty + scale - 1], fill="#000000")
+
+    f_s = ImageFont.truetype(FONT_B, 27)
+    d.text(((W - d.textlength("SCAN WITH ANY UPI APP", font=f_s)) / 2, cy),
+           "SCAN WITH ANY UPI APP", font=f_s, fill="#14171C")
+    f_v = ImageFont.truetype(FONT_R, 25)
+    d.text(((W - d.textlength(PAY["upi"], font=f_v)) / 2, cy + 40), PAY["upi"],
+           font=f_v, fill="#5B7488")
+    f_t = ImageFont.truetype(FONT_R, 21)
+    note = "The amount is already filled in"
+    d.text(((W - d.textlength(note, font=f_t)) / 2, cy + 78), note, font=f_t, fill="#8A9099")
+
+    d.line([56, HT - 84, W - 56, HT - 84], fill="#EDF2F7", width=2)
+    d.text((56, HT - 64), "AJANTA SERVICES ASSOCIATION",
+           font=ImageFont.truetype(FONT_B, 22), fill="#5B7488")
+    d.text((56, HT - 34), (BASE or "").replace("https://", ""),
+           font=ImageFont.truetype(FONT_B, 20), fill="#9AA3B0")
+    im.save(path, optimize=True)
+    return (qx - 16, qy - 16, qx + side + 16, qy + side + 16)
 
 
 def owner_page(key, o):
-    ink, wash, label, accent = PAGE_TONE[band_of(o)]
-
-    # the note may hold only letters, digits and spaces, and must stay short -
-    # a bracket or a full stop in an owner's name is enough to fail the payment.
-    unit = re.sub(r"\s*\([^)]*\)", "", (o["u"] or "").split("\u00b7")[0]).strip()
-    note = re.sub(r"[^A-Za-z0-9 ]+", " ", "Maintenance " + unit)
-    note = re.sub(r"\s+", " ", note).strip()[:30]
-    ref  = "AJ" + str(key) + DATESTAMP
-
-    def upi(scheme):
-        return scheme + ("pa=" + quote(PAY["upi"]) +
-                         "&pn=" + quote("Ajanta Services Association") +
-                         "&cu=INR&am=" + str(int(o["b"])) +
-                         "&tn=" + quote(note) +
-                         "&tr=" + quote(ref))
+    ink, wash, label = PAGE_TONE[band_of(o)][0], PAGE_TONE[band_of(o)][1], PAGE_TONE[band_of(o)][2]
+    pct = 0 if o["dm"] <= 0 else max(0, min(100, round(o["p"] / o["dm"] * 100)))
+    TOWER = "\u0905\u091c\u0902\u0924\u093e \u091f\u093e\u0935\u0930"
 
     if o["b"] > 0:
-        title = "%s \u2014 %s \u092c\u093e\u0915\u0940 \u00B7 \u0905\u091c\u0902\u0924\u093e \u091f\u093e\u0935\u0930" % (o["n"], rupees(o["b"]))
-        desc  = ("\u092c\u093f\u0932 %s \u00B7 \u091c\u092e\u093e %s \u00B7 \u092c\u0915\u093e\u092f\u093e %s\u0964 "
-                 "\u092f\u0939 \u092a\u0948\u0938\u093e \u0906\u092a\u0915\u0940 \u0905\u092a\u0928\u0940 \u0938\u0902\u092a\u0924\u094d\u0924\u093f \u0915\u0947 \u0930\u0916\u0930\u0916\u093e\u0935 \u0915\u093e \u0916\u0930\u094d\u091a \u0939\u0948\u0964"
-                 % (rupees(o["dm"]), rupees(o["p"]), rupees(o["b"])))
+        title = "%s \u2014 %s \u092c\u093e\u0915\u0940 \u00b7 %s" % (o["n"], rupees(o["b"]), TOWER)
+        desc = ("\u092c\u093f\u0932 %s \u00b7 \u091c\u092e\u093e %s \u00b7 \u092c\u0915\u093e\u092f\u093e %s\u0964 "
+                "\u092f\u0939 \u092a\u0948\u0938\u093e \u0906\u092a\u0915\u0940 \u0905\u092a\u0928\u0940 \u0938\u0902\u092a\u0924\u094d\u0924\u093f \u0915\u0947 \u0930\u0916\u0930\u0916\u093e\u0935 \u0915\u093e \u0916\u0930\u094d\u091a \u0939\u0948\u0964"
+                % (rupees(o["dm"]), rupees(o["p"]), rupees(o["b"])))
         duelabel, due = "\u0905\u092d\u0940 \u0926\u0947\u0928\u093e \u0939\u0948", rupees(o["b"])
-        def row(cls, scheme, logo, name, extra=""):
-            # built by concatenation, never %-formatting: the UPI links contain % escapes
-            return ('<a class="' + cls + '" href="' + upi(scheme) + '">'
-                    '<img src="' + logo + '" alt="' + name + '">'
-                    '<b>' + name + extra + '</b><span class="go">\u2192</span></a>')
-        # No app buttons here either: a link to this account is refused by the apps,
-        # and the person seeing that failure is the one who wanted to pay.
-        action = ('<div class="qrb"><b>\u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u0947 \u0932\u093f\u090f \u092f\u0939 QR \u0938\u094d\u0915\u0948\u0928 \u0915\u0940\u091c\u093f\u090f</b>'
-                  '<span>\u0915\u094b\u0908 \u092d\u0940 UPI \u0910\u092a \u0916\u094b\u0932\u093f\u090f \u2014 \u0930\u0915\u092e \u092a\u0939\u0932\u0947 \u0938\u0947 \u092d\u0930\u0940 \u0939\u0941\u0908 \u0906\u090f\u0917\u0940\u0964</span>'
-                  '<img src="' + BASE + '/o/qr-' + str(key) + '.png" alt="UPI QR">'
-                  '<em>Google Pay, PhonePe, Paytm \u2014 \u0915\u093f\u0938\u0940 \u0938\u0947 \u092d\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964</em></div>')
-
+        qr = ownerpage.QR_BLOCK.format(
+            base=BASE, key=key, due=rupees(o["b"]),
+            down=ownerpage.ICON_DOWN, share=ownerpage.ICON_SHARE,
+            sharetitle=H.escape("%s \u00b7 %s" % (TOWER, o["n"])),
+            sharetext=H.escape("%s \u0915\u093e \u0930\u0916\u0930\u0916\u093e\u0935 \u2014 \u092c\u0915\u093e\u092f\u093e %s" % (TOWER, rupees(o["b"]))))
     else:
-        title = "%s \u2014 \u092a\u0942\u0930\u093e \u092d\u0941\u0917\u0924\u093e\u0928 \u00B7 \u0905\u091c\u0902\u0924\u093e \u091f\u093e\u0935\u0930" % o["n"]
-        desc  = ("\u092c\u093f\u0932 %s \u00B7 \u091c\u092e\u093e %s \u00B7 \u0915\u094b\u0908 \u092c\u0915\u093e\u092f\u093e \u0928\u0939\u0940\u0902\u0964"
-                 % (rupees(o["dm"]), rupees(o["p"])))
-        duelabel, due, action = "\u092c\u0915\u093e\u092f\u093e", "\u0936\u0942\u0928\u094d\u092f", ""
+        title = "%s \u2014 \u092a\u0942\u0930\u093e \u092d\u0941\u0917\u0924\u093e\u0928 \u00b7 %s" % (o["n"], TOWER)
+        desc = ("\u092c\u093f\u0932 %s \u00b7 \u091c\u092e\u093e %s \u00b7 \u0915\u094b\u0908 \u092c\u0915\u093e\u092f\u093e \u0928\u0939\u0940\u0902\u0964"
+                % (rupees(o["dm"]), rupees(o["p"])))
+        duelabel, due, qr = "\u092c\u0915\u093e\u092f\u093e", "\u0936\u0942\u0928\u094d\u092f", ""
 
-    return OWNER_PAGE.format(
+    rows = []
+    for qkey, qlabel, qdate, _my in QUARTERS:
+        nice = qlabel.title().replace(" To ", " \u0938\u0947 ")
+        rows.append(ownerpage.BILL_ROW.format(
+            label=H.escape(nice),
+            url=BASE + "/o/bill-" + str(key) + "-" + qkey + ".pdf",
+            fname="ajanta-bill-%s-%s.pdf" % (key, qkey),
+            title=H.escape("%s \u00b7 %s \u00b7 %s" % (TOWER, o["n"], nice)),
+            down=ownerpage.ICON_DOWN, share=ownerpage.ICON_SHARE))
+    bills = ownerpage.BILLS_BLOCK.format(rows="".join(rows), count=len(rows)) if rows else ""
+
+    return ownerpage.PAGE.format(
+        css=ownerpage.CSS, js=ownerpage.JS,
         title=H.escape(title), desc=H.escape(desc), base=BASE, key=key,
-        wash=wash, ink=ink, accent=accent, label=H.escape(label),
+        wash=wash, ink=ink, label=H.escape(label),
         name=H.escape(o["n"]), units=H.escape(o["u"] or ""),
-        billed=rupees(o["dm"]), paid=rupees(o["p"]),
-        duelabel=duelabel, due=due, action=action,
-        upi=PAY["upi"], bank=PAY["bank"], ac=PAY["ac"], ifsc=PAY["ifsc"])
+        billed=rupees(o["dm"]), paid=rupees(o["p"]), pct=pct,
+        duelabel=duelabel, due=due, qr=qr, bills=bills,
+        upi=PAY["upi"], bank=PAY["bank"] + " \u00b7 Alambagh, Lucknow",
+        ac=PAY["ac"], ifsc=PAY["ifsc"])
 
 
-# ---------------------------------------------------------------- main
 def main():
     data = json.load(open(os.path.join(ROOT, "data", "slim.json"), encoding="utf-8"))
     own  = data["own"]
@@ -343,7 +379,13 @@ def main():
 
     front_image(data["totals"], own, os.path.join(OUT, "preview.png"))
 
+    billable = sorted((k for k, o in own.items() if inv.parse_units(o["u"])), key=lambda k: int(k))
+    for q in QUARTERS:
+        SERIALS[q[0]] = {k: i + 1 for i, k in enumerate(billable)}
+
     made_qr = 0
+    made_inv = 0
+    CFG_RATE = int(data.get("cfg", {}).get("rate", 4))
     for key, o in own.items():
         open(os.path.join(OUT, "o", "%s.html" % key), "w", encoding="utf-8").write(owner_page(key, o))
         owner_image(key, o, os.path.join(OUT, "o", "%s.png" % key))
@@ -362,8 +404,31 @@ def main():
             qrlib.to_png(mat, path, scale=6, quiet=3)
             if qrlib.decode(qrlib.matrix_from_png(path)) != s:
                 raise SystemExit("QR for owner %s does not read back correctly" % key)
+            cardpath = os.path.join(OUT, "o", "qrcard-%s.png" % key)
+            box = qr_card(key, o, mat, cardpath)
+            # the card carries other dark shapes, so crop to the QR before reading it
+            crop = os.path.join(OUT, "o", "_check.png")
+            Image.open(cardpath).crop(box).save(crop)
+            if qrlib.decode(qrlib.matrix_from_png(crop)) != s:
+                raise SystemExit("QR card for owner %s does not read back correctly" % key)
+            os.remove(crop)
             made_qr += 1
+
+        # a quarterly invoice per owner, in the association's own format.
+        # The invoice number comes from the register when it is known there;
+        # otherwise it falls back to a quarter-and-shop reference.
+        units = inv.parse_units(o["u"])
+        if units:
+            for qkey, qlabel, qdate, _my in QUARTERS:
+                num = (o.get("inv") or {}).get(qkey) or invoice_no(qkey, key)
+                inv.build(os.path.join(OUT, "o", "bill-%s-%s.pdf" % (key, qkey)),
+                          inv_no=num, inv_date=qdate,
+                          buyer=o["n"], buyer_addr="AJANTA TOWER, LUCKNOW",
+                          units=units, rate=CFG_RATE, months=3, year=2026,
+                          quarter_label=qlabel)
+            made_inv += len(QUARTERS)
     print("  %d payment QRs written and each one decoded again" % made_qr)
+    print("  %d quarterly invoices written" % made_inv)
 
     # a ready message per owner, so nothing has to be typed
     lines = ["READY-TO-SEND WHATSAPP MESSAGES", "Har owner ka apna link.", "", "=" * 60, ""]
