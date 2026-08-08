@@ -239,8 +239,7 @@ h1{{font-family:"Plus Jakarta Sans",sans-serif;font-size:clamp(23px,6.2vw,30px);
 .qrb span{{display:block;font-size:12px;color:#5B7488;margin:4px 0 11px;line-height:1.5}}
 .qrb img{{width:100%;max-width:200px;height:auto;display:block;margin:0 auto;image-rendering:pixelated;
   border:1px solid #EDF2F7;border-radius:8px}}
-.orsep{{margin:13px 0 0;text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.12em;
-  text-transform:uppercase;color:#9AA3B0}}
+.qrb em{{display:block;font-style:normal;margin-top:9px;font-size:11px;line-height:1.5;color:#8A9099}}
 .det{{margin-top:16px;border-top:1px solid #EDF2F7;padding-top:14px;font-size:13px;line-height:1.75;color:#3A4560}}
 .det b{{color:#0B1220;font-family:"Space Grotesk",monospace}}
 .full{{display:block;text-align:center;margin-top:18px;font-size:13.5px;font-weight:700;color:#2E8BC0;text-decoration:none}}
@@ -293,18 +292,13 @@ def owner_page(key, o):
             return ('<a class="' + cls + '" href="' + upi(scheme) + '">'
                     '<img src="' + logo + '" alt="' + name + '">'
                     '<b>' + name + extra + '</b><span class="go">\u2192</span></a>')
+        # No app buttons here either: a link to this account is refused by the apps,
+        # and the person seeing that failure is the one who wanted to pay.
         action = ('<div class="qrb"><b>\u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u0947 \u0932\u093f\u090f \u092f\u0939 QR \u0938\u094d\u0915\u0948\u0928 \u0915\u0940\u091c\u093f\u090f</b>'
                   '<span>\u0915\u094b\u0908 \u092d\u0940 UPI \u0910\u092a \u0916\u094b\u0932\u093f\u090f \u2014 \u0930\u0915\u092e \u092a\u0939\u0932\u0947 \u0938\u0947 \u092d\u0930\u0940 \u0939\u0941\u0908 \u0906\u090f\u0917\u0940\u0964</span>'
-                  '<img src="' + BASE + '/o/qr-' + str(key) + '.png" alt="UPI QR"></div>'
-                  '<p class="orsep">\u092f\u093e \u0938\u0940\u0927\u0947 \u0915\u094b\u0908 \u0910\u092a \u0916\u094b\u0932\u093f\u090f</p>'
-                  '<a class="btn" href="' + upi("upi://pay?") + '">' + rupees(o["b"]) +
-                  ' \u0915\u093e \u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u0930\u0947\u0902</a>'
-                  '<div class="apps">'
-                  + row("sug", "paytmmp://pay?", APP_LOGO["pt"], "Paytm",
-                        "<small>\u0938\u0941\u091d\u093e\u092f\u093e \u0917\u092f\u093e</small>")
-                  + row("", "tez://upi/pay?", APP_LOGO["gp"], "Google Pay")
-                  + row("", "phonepe://pay?", APP_LOGO["pp"], "PhonePe")
-                  + '</div>')
+                  '<img src="' + BASE + '/o/qr-' + str(key) + '.png" alt="UPI QR">'
+                  '<em>Google Pay, PhonePe, Paytm \u2014 \u0915\u093f\u0938\u0940 \u0938\u0947 \u092d\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964</em></div>')
+
     else:
         title = "%s \u2014 \u092a\u0942\u0930\u093e \u092d\u0941\u0917\u0924\u093e\u0928 \u00B7 \u0905\u091c\u0902\u0924\u093e \u091f\u093e\u0935\u0930" % o["n"]
         desc  = ("\u092c\u093f\u0932 %s \u00B7 \u091c\u092e\u093e %s \u00B7 \u0915\u094b\u0908 \u092c\u0915\u093e\u092f\u093e \u0928\u0939\u0940\u0902\u0964"
