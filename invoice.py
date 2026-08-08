@@ -20,7 +20,8 @@ SELLER = {
 BANK = [
     ("Bank Name", "Federal Bank"),
     ("A/c No.", "26100200001004"),
-    ("Branch & IFS Code", "Alambagh, Lucknow & FDRL0002610"),
+    ("Branch", "Alambagh, Lucknow"),
+    ("IFS Code", "FDRL0002610"),
 ]
 DECLARATION = [
     "- Payment shall be accepted only through banking channels.",
@@ -238,9 +239,9 @@ def build(path, *, inv_no, inv_date, buyer, buyer_addr, units, rate, months, yea
         if line:
             c.drawString(mid + 6 * mm, yy2, line)
             yy2 -= 4.2 * mm
-    c.line(mid, y, mid, y - 34 * mm)
-    c.rect(x0, y - 34 * mm, x1 - x0, 34 * mm)
-    y -= 34 * mm
+    c.line(mid, y, mid, y - 36 * mm)
+    c.rect(x0, y - 36 * mm, x1 - x0, 36 * mm)
+    y -= 36 * mm
 
     c.setFont("Helvetica", 8)
     c.drawString(x0 + 3 * mm, y - 6 * mm, "Customer's Seal and Signature")

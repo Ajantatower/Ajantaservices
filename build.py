@@ -13,8 +13,17 @@ the workflow passes it in automatically, so nothing here needs editing by hand.
 import json, os, re, shutil, sys, html as H
 from urllib.parse import quote
 from PIL import Image, ImageDraw, ImageFont
-import qr as qrlib
-import invoice as inv
+try:
+    import qr as qrlib
+    import invoice as inv
+    import ownerpage
+    from shoparea import AREA as SHOP_AREA
+except ModuleNotFoundError as e:
+    raise SystemExit(
+        "MISSING MODULE: %s\n"
+        "build.py needs qr.py, invoice.py, ownerpage.py and shoparea.py beside it in the\n"
+        "repo root, "
+        "and the workflow must install pillow and reportlab." % e.name)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT  = os.path.join(ROOT, "_site")
@@ -223,6 +232,47 @@ def front_image(totals, own, path):
 import ownerpage
 
 
+def per_shop_units(o):
+    """Every shop on its own line, with its own super area.
+
+    The register groups shops - "LGF 28, 29, 33, 34 (1,020 sq ft)" - because that
+    is how the holding is described. An invoice should show each shop, so the areas
+    come from the master sheet. Every group was checked to add up to the register's
+    own figure before this was switched on; if one ever stops adding up the build
+    says so rather than printing a number nobody can reconcile.
+    """
+    out, total = [], 0
+    for seg in str(o.get("u") or "").split("\u00b7"):
+        m = re.search(r"\(([\d,]+)\s*sq ft\)", seg)
+        if not m:
+            continue
+        want = int(m.group(1).replace(",", ""))
+        head = re.sub(r"\s*\([^)]*\)", "", seg).strip()
+        fm = re.match(r"(LGF|UGF|FF|SF)\s*(.*)", head)
+        if not fm:
+            continue
+        floor, rest = fm.group(1), fm.group(2).strip()
+        codes = [rest] if floor == "SF" else [s.strip() for s in rest.split(",") if s.strip()]
+
+        rows, got, i = [], 0, 0
+        while i < len(codes):
+            code = codes[i]
+            if floor == "LGF" and code == "12A" and i + 1 < len(codes) and codes[i + 1] == "13":
+                code, i = "12A/13", i + 1
+            key = "%s-%s" % (floor, code)
+            if key not in SHOP_AREA:
+                return None                      # fall back to the grouped form
+            rows.append((floor, code, SHOP_AREA[key]))
+            got += SHOP_AREA[key]
+            i += 1
+        if got != want:
+            return None
+        out += rows
+        total += got
+    return out or None
+
+
+
 def qr_card(key, o, qr_matrix, path):
     """The image people actually save and forward.
 
@@ -417,7 +467,7 @@ def main():
         # a quarterly invoice per owner, in the association's own format.
         # The invoice number comes from the register when it is known there;
         # otherwise it falls back to a quarter-and-shop reference.
-        units = inv.parse_units(o["u"])
+        units = per_shop_units(o) or inv.parse_units(o["u"])
         if units:
             for qkey, qlabel, qdate, _my in QUARTERS:
                 num = (o.get("inv") or {}).get(qkey) or invoice_no(qkey, key)
