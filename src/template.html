@@ -2090,7 +2090,8 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
   box-shadow:0 18px 44px rgba(10,24,40,.35)}
 .t3dbox.expand{position:fixed;inset:0;z-index:60;border-radius:0}
 .t3dstage{position:relative;width:100%;height:min(78vh,640px);min-height:420px;touch-action:none}
-.t3dbox.expand .t3dstage{height:100%}
+.t3dbox.expand{display:flex;flex-direction:column}
+.t3dbox.expand .t3dstage{flex:1 1 auto;height:auto;min-height:0}
 .t3dstage canvas{display:block}
 /* faint procedural city behind the canvas (canvas renders with alpha) */
 .t3dcity{position:absolute;inset:auto 0 0 0;height:46%;pointer-events:none;opacity:.5;
@@ -2098,21 +2099,23 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
     linear-gradient(0deg,rgba(10,20,32,.9),rgba(10,20,32,0) 70%),
     repeating-linear-gradient(90deg,rgba(124,143,163,.16) 0 26px,transparent 26px 44px,rgba(124,143,163,.10) 44px 58px,transparent 58px 90px);
   -webkit-mask-image:linear-gradient(0deg,#000 55%,transparent);mask-image:linear-gradient(0deg,#000 55%,transparent)}
-.t3dfloors{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:8px;z-index:5}
-.t3df{display:flex;align-items:center;gap:9px;background:rgba(14,26,43,.72);border:1px solid rgba(124,143,163,.25);
+.t3dfloors{display:flex;gap:8px;padding:12px 12px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.t3dfloors::-webkit-scrollbar{display:none}
+.t3df{flex:0 0 auto;display:flex;align-items:baseline;gap:7px;background:rgba(14,26,43,.72);border:1px solid rgba(124,143,163,.25);
   border-radius:12px;padding:7px 11px;cursor:pointer;backdrop-filter:none;min-width:118px;
   transition:border-color .2s,transform .2s}
 .t3df:hover{border-color:rgba(199,215,230,.55)}
-.t3df.on{border-color:#F5A524;transform:translateX(3px)}
-.t3df b{font-family:"Space Grotesk",monospace;font-size:17px;color:#E8F0F7;letter-spacing:.04em;min-width:38px}
+.t3df.on{border-color:#F5A524}
+.t3df b{font-family:"Space Grotesk",monospace;font-size:15px;color:#E8F0F7;letter-spacing:.04em}
 .t3df .pc{font-family:"Space Grotesk",monospace;font-weight:700;font-size:15px}
-.t3df small{display:block;font-size:9.5px;letter-spacing:.12em;color:#8CA1B5;text-transform:uppercase}
-.t3dlegend{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-wrap:wrap;gap:6px;max-width:52%;
+.t3df small{display:block;font-size:9px;letter-spacing:.1em;color:#8CA1B5;text-transform:uppercase}
+.t3dlegend{display:flex;flex-wrap:wrap;gap:6px;padding:2px 12px 0;
   justify-content:flex-end}
 .t3dlegend span{display:inline-flex;align-items:center;gap:6px;background:rgba(14,26,43,.72);
   border:1px solid rgba(124,143,163,.25);border-radius:999px;padding:4px 10px;font-size:11px;color:#C7D7E6}
 .t3dlegend i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
-.t3dctl{position:absolute;left:12px;bottom:12px;z-index:6;display:flex;flex-wrap:wrap;gap:6px;max-width:46%}
+.t3dctl{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 12px}
 .t3dctl button{background:rgba(14,26,43,.78);border:1px solid rgba(124,143,163,.3);color:#DCE8F2;
   border-radius:10px;padding:6px 11px;font:600 11.5px/1 "Plus Jakarta Sans",sans-serif;letter-spacing:.03em;cursor:pointer}
 .t3dctl button[aria-pressed="true"]{border-color:#F5A524;color:#FFD98A}
@@ -2153,9 +2156,10 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
   border:1px solid rgba(199,215,230,.3);box-shadow:0 20px 30px rgba(0,0,0,.4)}
 .t3dplate i{border-radius:3px;min-height:10px}
 @media(max-width:520px){
-  .t3dfloors{gap:5px}.t3df{min-width:96px;padding:5px 9px}.t3df b{font-size:14px}
-  .t3dlegend{max-width:70%;bottom:56px}
-  .t3dctl{max-width:calc(100% - 24px)}
+  .t3dfloors{gap:6px;padding:10px 10px 2px}.t3df{padding:5px 9px}.t3df b{font-size:14px}
+  .t3df small{display:none}
+  .t3dlegend{padding:2px 10px 0}
+  .t3dctl{padding:8px 10px 10px}
   .t3dplate{height:145px}
 }
 @media(prefers-reduced-motion:reduce){.t3df{transition:none}}
@@ -2216,11 +2220,11 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
   <h2 class="t3dhindi">अजंता टावर &mdash; भुगतान स्थिति</h2>
   <p class="t3dsub">Comprehensive payment status dashboard</p>
   <div class="t3dbox" id="t3dbox">
+    <div class="t3dfloors" id="t3dfloors"></div>
     <div class="t3dstage" id="t3dstage">
       <div class="t3dcity" aria-hidden="true"></div>
     </div>
     <div class="t3dfb" id="t3dfb" aria-hidden="true"></div>
-    <div class="t3dfloors" id="t3dfloors"></div>
     <div class="t3dlegend" id="t3dlegend"></div>
     <div class="t3dctl" id="t3dctl" hidden>
       <button type="button" id="t3dReset">Reset View</button>
@@ -2413,7 +2417,7 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
     The design, code and layout of this website are proprietary to Shucart Enterprises
     and may not be copied, reproduced or reused without written permission.
     The accounts shown belong to Ajanta Services Association.</p>
-    <p class="bstamp">Build v151</p>
+    <p class="bstamp">Build v153</p>
     <div class="tally" id="tally" aria-label="Site activity">
       <b title="Site visits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.4 9.2h17.2M3.4 14.8h17.2"/><ellipse cx="12" cy="12" rx="4.1" ry="9"/></svg><span id="tVisits">—</span></b>
@@ -4709,25 +4713,51 @@ boot();
     return [parseInt(h.slice(0,2),16)/255, parseInt(h.slice(2,4),16)/255, parseInt(h.slice(4,6),16)/255];
   }
 
-  /* ---------- the real footprint ---------- */
-  var CELLS = (function(){
-    var m = {};
-    var put = function(u, c, r){ m["u" + u] = { c: c, r: r }; };
-    put(15,0,1); put(14,1,1); put(12,0,2); put(13,1,2); put(11,0,3); put(10,1,3);
-    put(1,0,4);  put(2,1,4);  put(3,2,4);
-    put(9,3,2);  put(8,4,2);  put(7,5,2);  put(4,3,3); put(5,4,3); put(6,5,3);
-    put(30,7,2); put(31,8,2); put(32,9,2); put(40,7,3); put(39,8,3); put(38,9,3);
-    put(26,10,1); put(27,11,1); put(29,10,2); put(28,11,2); put(33,10,3); put(34,11,3);
-    put(37,9,4); put(36,10,4); put(35,11,4);
-    put(16,1,0); put(17,3,0); put(18,4,0); put(19,5,0); put(20,6,0);
-    put(22,7,0); put(23,8,0); put(24,9,0); put(25,10,0);
-    return m;
-  })();
-  /* lift, stairs and the atrium: shown as low grey blocks so the plan reads right */
-  var UTIL = [[0,0],[2,0],[11,0],[6,1],[6,2],[6,3]];
-  var COLS = 12, ROWS = 5, CELL = 1.0, GAP = 0.08, SPACING = 2.35, EXPLODE = 1.85;
-  function cellX(c){ return (c - (COLS - 1) / 2) * CELL; }
-  function cellZ(r){ return (r - (ROWS - 1) / 2) * CELL; }
+  /* ---------- THE REAL FLOOR PLATE ----------
+     Traced off the architect's drawing rather than approximated on a grid.
+     Every shop carries its own rectangle in plan fractions - left, right,
+     near, far - so the wide left-wing shops stay wide, the narrow front row
+     stays narrow, and shop 20 is not drawn the same size as shop 17.
+     LGF, UGF and FF share this plate; SF is two half-floor blocks. */
+  var PLAN = {
+    /* top strip beside the lift and the stairs */
+    16:[0.0410,0.1220,0.0200,0.1600], 17:[0.2390,0.2970,0.0200,0.1600], 18:[0.2970,0.3550,0.0200,0.1600],
+    19:[0.3550,0.4130,0.0200,0.1600], 20:[0.4130,0.4710,0.0200,0.1600], 22:[0.4710,0.5290,0.0200,0.1600],
+    23:[0.5290,0.5870,0.0200,0.1600], 24:[0.5870,0.6450,0.0200,0.1600], 25:[0.6450,0.7030,0.0200,0.1600],
+    /* left wing, back to front */
+    15:[0.0320,0.1274,0.2500,0.4200], 14:[0.1274,0.2120,0.2500,0.4200], 12:[0.0320,0.1273,0.4400,0.5500],
+    13:[0.1273,0.2120,0.4400,0.5500], 11:[0.0320,0.1273,0.5700,0.6800], 10:[0.1273,0.2120,0.5700,0.6800],
+    /* right wing */
+    26:[0.7430,0.8172,0.2500,0.4200], 27:[0.8172,0.9010,0.2500,0.4200], 29:[0.7430,0.8174,0.4400,0.5500],
+    28:[0.8174,0.9010,0.4400,0.5500], 33:[0.7430,0.8174,0.5700,0.6800], 34:[0.8174,0.9010,0.5700,0.6800],
+    /* the two inner blocks either side of the atrium */
+    9:[0.2390,0.2959,0.5700,0.6800], 8:[0.2959,0.3531,0.5700,0.6800], 7:[0.3531,0.4100,0.5700,0.6800],
+    30:[0.5270,0.5856,0.5700,0.6800], 31:[0.5856,0.6444,0.5700,0.6800], 32:[0.6444,0.7030,0.5700,0.6800],
+    /* front row */
+    1:[0.0320,0.0917,0.7300,0.9000], 2:[0.0917,0.1514,0.7300,0.9000], 3:[0.1514,0.2120,0.7300,0.9000],
+    4:[0.2390,0.2959,0.7300,0.9000], 5:[0.2959,0.3531,0.7300,0.9000], 6:[0.3531,0.4100,0.7300,0.9000],
+    40:[0.5270,0.5855,0.7300,0.9000], 39:[0.5855,0.6445,0.7300,0.9000], 38:[0.6445,0.7030,0.7300,0.9000],
+    37:[0.7430,0.7954,0.7300,0.9000], 36:[0.7954,0.8486,0.7300,0.9000], 35:[0.8486,0.9010,0.7300,0.9000]
+  };
+;
+  /* LGF holds 12A and 13 as ONE unit, so there it is the two rectangles joined */
+  var PLAN_12A = [0.0320,0.2120,0.4400,0.5500];
+  /* lifts, stairs and toilets - low and grey, so the plate reads as a real
+     floor and not as a solid raft of shops. The atrium is left as a hole. */
+  var UTIL = [
+    [0.007,0.036,0.02,0.16], [0.124,0.207,0.02,0.16], [0.732,0.815,0.02,0.16],
+    [0.820,0.901,0.02,0.16], [0.901,0.977,0.02,0.16],
+    [0.239,0.293,0.25,0.42], [0.662,0.703,0.25,0.42],
+    [0.437,0.505,0.73,0.90]
+  ];
+  var PW = 18.0, PD = 8.2, GAP = 0.10;   /* the plate's own size in world units */
+  var SPACING = 3.2, EXPLODE = 1.85;
+  function planBox(r){
+    return { x: ((r[0] + r[1]) / 2 - 0.5) * PW,
+             z: ((r[2] + r[3]) / 2 - 0.5) * PD,
+             w: Math.max(0.15, (r[1] - r[0]) * PW - GAP),
+             d: Math.max(0.15, (r[3] - r[2]) * PD - GAP) };
+  }
   function uNum(s){ var m = String(s).match(/\d+/); return m ? parseInt(m[0], 10) : null; }
   var inr = function(n){ return "\u20b9" + Math.round(n || 0).toLocaleString("en-IN"); };
 
@@ -4858,26 +4888,29 @@ boot();
     model.floors.forEach(function(f, fi){
       var base = floorY(fi);
       floors.push({ code: f.code, data: f, base: base, off: 0, dim: 0 });
-      boxes.push({ kind: "plate", fi: fi, x: 0, z: 0, w: COLS * CELL + 1.3, d: ROWS * CELL + 1.3,
-                   h: 0.13, yOff: -0.13, col: [0.105, 0.196, 0.302], alpha: 0.97 });
+      boxes.push({ kind: "plate", fi: fi, x: 0, z: 0, w: PW * 1.03, d: PD * 1.06,
+                   h: 0.16, yOff: -0.16, col: [0.105, 0.196, 0.302], alpha: 0.97 });
       if (f.code !== "SF"){
-        UTIL.forEach(function(u){
-          boxes.push({ kind: "util", fi: fi, x: cellX(u[0]), z: cellZ(u[1]),
-                       w: CELL - GAP, d: CELL - GAP, h: 0.14, col: hex2rgb(COL.util), alpha: 1 });
+        UTIL.forEach(function(r){
+          var q = planBox(r);
+          boxes.push({ kind: "util", fi: fi, x: q.x, z: q.z, w: q.w, d: q.d,
+                       h: 0.17, col: hex2rgb(COL.util), alpha: 1 });
         });
       }
       f.units.forEach(function(u, ui){
         var b;
         if (f.code === "SF"){
-          b = { x: (String(u.id).indexOf("Part-A") > -1 || ui === 0) ? -3.15 : 3.15, z: 0.35,
-                w: 5.6, d: 4.6, hMax: 0.5 };
+          var left = String(u.id).indexOf("Part-A") > -1 || ui === 0;
+          b = { x: (left ? -0.25 : 0.25) * PW, z: 0,
+                w: PW * 0.46, d: PD * 0.82, hMax: 0.62 };
         } else {
-          var c = CELLS["u" + uNum(u.label)];
-          if (!c) return;
-          b = { x: cellX(c.c), z: cellZ(c.r), w: CELL - GAP, d: CELL - GAP, hMax: 1.05 };
+          var r = (String(u.label).indexOf("12A") > -1) ? PLAN_12A : PLAN[uNum(u.label)];
+          if (!r) return;
+          b = planBox(r);
+          b.hMax = 1.45;
         }
         var bx = { kind: "shop", fi: fi, x: b.x, z: b.z, w: b.w, d: b.d, hMax: b.hMax,
-                   h: 0.16 + b.hMax * (u.frac || 0), grow: 1, unit: u, floor: f.code,
+                   h: 0.22 + b.hMax * (u.frac || 0), grow: 1, unit: u, floor: f.code,
                    col: hex2rgb(COL[u.band] || COL.util), alpha: 1, glow: 0 };
         boxes.push(bx); byId[u.id] = bx;
       });
@@ -4921,12 +4954,12 @@ boot();
        floor being looked at. Uses the animated positions, so it stays centred
        through the exploded view too. */
     function fitBox(){
-      var hx = (COLS * CELL + 1.3) / 2, hz = (ROWS * CELL + 1.3) / 2;
+      var hx = PW * 1.03 / 2, hz = PD * 1.06 / 2;
       var lo = 1e9, hi = -1e9;
       floors.forEach(function(f, i){
         if (focusIdx > -1 && i !== focusIdx) return;
-        lo = Math.min(lo, f.base + f.off - 0.13);
-        hi = Math.max(hi, f.base + f.off + 0.92);
+        lo = Math.min(lo, f.base + f.off - 0.16);
+        hi = Math.max(hi, f.base + f.off + 1.25);
       });
       return { hx: hx, hz: hz, lo: lo, hi: hi };
     }
@@ -5152,7 +5185,11 @@ boot();
     }
 
     /* --- pointer: orbit, tap, pinch --- */
-    var drag = null, moved = 0, spin = false, spinPause = 0;
+    /* Auto rotate is ON by default - the tower should be turning when the
+       section comes into view. A touch or drag pauses it for three seconds
+       so nobody has to fight it, and it is off entirely for anyone who has
+       asked their device for reduced motion. */
+    var drag = null, moved = 0, spin = !reduced, spinPause = 0;
     function localXY(e){
       var r = cv.getBoundingClientRect();
       return { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -5224,6 +5261,8 @@ boot();
     }
     btn("t3dReset", function(){
       exploded = false;
+      spin = !reduced;
+      if (spinBtn) spinBtn.setAttribute("aria-pressed", spin ? "true" : "false");
       var eb = document.getElementById("t3dExplode");
       if (eb) eb.setAttribute("aria-pressed", "false");
       floors.forEach(function(f){ tween(f, "off", 0, 700); });
@@ -5248,6 +5287,8 @@ boot();
       flowOn = !flowOn;
       b.setAttribute("aria-pressed", flowOn ? "true" : "false");
     });
+    var spinBtn = document.getElementById("t3dSpin");
+    if (spinBtn) spinBtn.setAttribute("aria-pressed", spin ? "true" : "false");
     btn("t3dSpin", function(b){
       spin = !spin;
       b.setAttribute("aria-pressed", spin ? "true" : "false");
@@ -5305,7 +5346,7 @@ boot();
     function frame(now){
       requestAnimationFrame(frame);
       if (!visible) { last = now; return; }
-      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      var dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
       stepTweens(now);
       if (spin && now > spinPause) cam.yaw += dt * 0.22;
       centre();
@@ -5367,7 +5408,7 @@ boot();
       }
 
       floors.forEach(function(f, i){
-        var p = project(-(COLS * CELL + 1.3) / 2 - 0.5, f.base + f.off + 0.1, (ROWS * CELL + 1.3) / 2);
+        var p = project(-PW * 0.53, f.base + f.off + 0.12, PD * 0.53);
         var el = labels[i];
         if (!p){ el.style.display = "none"; return; }
         el.style.display = "block";
@@ -5388,7 +5429,7 @@ boot();
             b.unit = u;
             var c = hex2rgb((next.tone || COL)[u.band] || COL.util);
             b.col = c;
-            tween(b, "h", 0.16 + b.hMax * (u.frac || 0), 700);
+            tween(b, "h", 0.22 + b.hMax * (u.frac || 0), 700);
           });
         });
         floors.forEach(function(fl){
