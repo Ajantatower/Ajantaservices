@@ -12,9 +12,12 @@ permissions:
   pages: write
   id-token: write
 
+# Only one publish at a time. Do NOT cancel one that is already running:
+# cancelling a deploy mid-flight can leave the github-pages environment
+# holding its lock, and then every later run sits queued for ever.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -40,12 +43,19 @@ jobs:
         with:
           path: _site
 
+    timeout-minutes: 20
+
   publish:
     needs: build
     runs-on: ubuntu-latest
+    # If Pages is wedged, fail in 15 minutes instead of spinning for hours.
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - id: deploy
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 600000
+          error_count: 10
