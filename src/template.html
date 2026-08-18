@@ -1990,6 +1990,18 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
   .iday .chakra{animation:chakraIn 1.1s cubic-bezier(.2,.8,.3,1) both}
   @keyframes chakraIn{from{transform:rotate(-90deg) scale(.7);opacity:0}to{transform:none;opacity:1}}
 }
+
+/* ---------- a quarter that is owed but not yet late ----------
+   Blue, not red: these owners are not behind. The colour turns over by itself the
+   day after the last date, when the new quarter starts counting like any other. */
+.orow.st-due{background:#fff;border-color:rgba(44,111,168,.22)}
+.orow.st-due:after{background:linear-gradient(180deg,#2C6FA8,#4A90C8)}
+.orow.st-due .ob{color:#1F5580!important}
+.orow.st-due .ob small{color:#3B7AAE!important}
+.shop.due{background:#E7F1FA;border-color:#2C6FA8;color:#1F5580}
+.chip.due i{background:#2C6FA8}
+.duenote{display:inline-block;margin-left:7px;font-size:10.5px;font-weight:700;letter-spacing:.04em;
+  padding:2px 8px;border-radius:99px;background:#E7F1FA;color:#1F5580;white-space:nowrap}
 @media(prefers-reduced-motion:reduce){.orow .wathanks:after{display:none}}
 @media(prefers-reduced-motion:reduce){
   .tybadge{animation:none}.tybadge:after{display:none}.tybadge svg{animation:none}
@@ -2066,6 +2078,88 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
   .orow,.stat,.bcard,.fcard,.list .mhead{transition:none}
   .orow:before,.stat:before,.bcard:before,.fcard:before{display:none}
 }
+/* ---------- 3D payment status tower ---------- */
+#tower3d .shead h2{margin-bottom:2px}
+.t3dtitle{font-family:"Space Grotesk",monospace;font-weight:700;font-size:15px;letter-spacing:.14em;
+  color:#5B7186;text-transform:uppercase;text-align:center;margin:0 0 4px}
+.t3dhindi{text-align:center;font-size:clamp(20px,4.6vw,30px);font-weight:800;color:#14263A;margin:0 0 2px}
+.t3dsub{font-family:"Space Grotesk",monospace;font-size:11px;letter-spacing:.22em;color:#7C8FA3;
+  text-transform:uppercase;text-align:center;margin:0 0 14px}
+.t3dbox{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid #16283E;
+  background:radial-gradient(120% 90% at 50% 0%,#16283E 0%,#0E1A2B 62%,#0A1420 100%);
+  box-shadow:0 18px 44px rgba(10,24,40,.35)}
+.t3dbox.expand{position:fixed;inset:0;z-index:60;border-radius:0}
+.t3dstage{position:relative;width:100%;height:min(78vh,640px);min-height:420px;touch-action:none}
+.t3dbox.expand .t3dstage{height:100%}
+.t3dstage canvas{display:block}
+/* faint procedural city behind the canvas (canvas renders with alpha) */
+.t3dcity{position:absolute;inset:auto 0 0 0;height:46%;pointer-events:none;opacity:.5;
+  background:
+    linear-gradient(0deg,rgba(10,20,32,.9),rgba(10,20,32,0) 70%),
+    repeating-linear-gradient(90deg,rgba(124,143,163,.16) 0 26px,transparent 26px 44px,rgba(124,143,163,.10) 44px 58px,transparent 58px 90px);
+  -webkit-mask-image:linear-gradient(0deg,#000 55%,transparent);mask-image:linear-gradient(0deg,#000 55%,transparent)}
+.t3dfloors{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:8px;z-index:5}
+.t3df{display:flex;align-items:center;gap:9px;background:rgba(14,26,43,.72);border:1px solid rgba(124,143,163,.25);
+  border-radius:12px;padding:7px 11px;cursor:pointer;backdrop-filter:none;min-width:118px;
+  transition:border-color .2s,transform .2s}
+.t3df:hover{border-color:rgba(199,215,230,.55)}
+.t3df.on{border-color:#F5A524;transform:translateX(3px)}
+.t3df b{font-family:"Space Grotesk",monospace;font-size:17px;color:#E8F0F7;letter-spacing:.04em;min-width:38px}
+.t3df .pc{font-family:"Space Grotesk",monospace;font-weight:700;font-size:15px}
+.t3df small{display:block;font-size:9.5px;letter-spacing:.12em;color:#8CA1B5;text-transform:uppercase}
+.t3dlegend{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-wrap:wrap;gap:6px;max-width:52%;
+  justify-content:flex-end}
+.t3dlegend span{display:inline-flex;align-items:center;gap:6px;background:rgba(14,26,43,.72);
+  border:1px solid rgba(124,143,163,.25);border-radius:999px;padding:4px 10px;font-size:11px;color:#C7D7E6}
+.t3dlegend i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.t3dctl{position:absolute;left:12px;bottom:12px;z-index:6;display:flex;flex-wrap:wrap;gap:6px;max-width:46%}
+.t3dctl button{background:rgba(14,26,43,.78);border:1px solid rgba(124,143,163,.3);color:#DCE8F2;
+  border-radius:10px;padding:6px 11px;font:600 11.5px/1 "Plus Jakarta Sans",sans-serif;letter-spacing:.03em;cursor:pointer}
+.t3dctl button[aria-pressed="true"]{border-color:#F5A524;color:#FFD98A}
+.t3dctl button:active{transform:translateY(1px)}
+.t3dtip{position:absolute;z-index:8;pointer-events:none;transform:translate(-50%,-118%);
+  background:rgba(10,20,32,.94);border:1px solid rgba(199,215,230,.35);border-radius:12px;
+  padding:9px 12px;min-width:168px;color:#EAF2F9;font-size:12px;line-height:1.45;
+  box-shadow:0 10px 26px rgba(0,0,0,.45);opacity:0;transition:opacity .12s}
+.t3dtip.on{opacity:1}
+.t3dtip b{display:block;font-size:12.5px}
+.t3dtip .tb{display:inline-block;margin-top:5px;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:700}
+.t3dtip .amt{font-family:"Space Grotesk",monospace;font-weight:700}
+.t3dpanel{position:absolute;right:12px;top:12px;z-index:9;width:min(310px,calc(100% - 24px));
+  background:rgba(12,23,38,.96);border:1px solid rgba(199,215,230,.3);border-radius:16px;
+  padding:15px 16px;color:#EAF2F9;box-shadow:0 16px 40px rgba(0,0,0,.5);display:none}
+.t3dpanel.on{display:block}
+.t3dpanel h4{margin:0 0 2px;font-size:15px;color:#FFF}
+.t3dpanel .pu{font-size:11px;letter-spacing:.1em;color:#8CA1B5;text-transform:uppercase;margin-bottom:9px}
+.t3dpanel table{width:100%;border-collapse:collapse;font-size:12.5px}
+.t3dpanel td{padding:4px 0;border-bottom:1px solid rgba(124,143,163,.18)}
+.t3dpanel td:last-child{text-align:right;font-family:"Space Grotesk",monospace;font-weight:700}
+.t3dpanel .prow{display:flex;gap:8px;margin-top:12px}
+.t3dpanel .prow a,.t3dpanel .prow button{flex:1;text-align:center;border-radius:10px;padding:8px 0;
+  font:700 12px/1 "Plus Jakarta Sans",sans-serif;cursor:pointer;text-decoration:none}
+.t3dpanel .pled{background:#F5A524;border:0;color:#3D2E06}
+.t3dpanel .pcls{background:transparent;border:1px solid rgba(199,215,230,.4);color:#DCE8F2}
+.t3dbands{display:flex;gap:5px;margin:9px 0 2px}
+.t3dbands i{height:7px;border-radius:4px}
+/* 2D fallback: the same tower as flat isometric plates, no WebGL needed */
+.t3dfb{position:relative;padding:26px 8px 18px;display:none}
+.t3dfb.on{display:block}
+.t3dfbrow{display:grid;grid-template-columns:96px 1fr;align-items:center;height:96px}
+.t3dfbrow .fk b{font-family:"Space Grotesk",monospace;font-size:20px;color:#E8F0F7;display:block}
+.t3dfbrow .fk span{font-family:"Space Grotesk",monospace;font-weight:700;font-size:13px}
+.t3dplate{height:165px;display:grid;gap:3px;padding:10px;border-radius:14px;
+  transform:rotateX(56deg) rotateZ(-42deg);transform-origin:50% 50%;
+  background:linear-gradient(145deg,rgba(199,215,230,.16),rgba(199,215,230,.05));
+  border:1px solid rgba(199,215,230,.3);box-shadow:0 20px 30px rgba(0,0,0,.4)}
+.t3dplate i{border-radius:3px;min-height:10px}
+@media(max-width:520px){
+  .t3dfloors{gap:5px}.t3df{min-width:96px;padding:5px 9px}.t3df b{font-size:14px}
+  .t3dlegend{max-width:70%;bottom:56px}
+  .t3dctl{max-width:calc(100% - 24px)}
+  .t3dplate{height:145px}
+}
+@media(prefers-reduced-motion:reduce){.t3df{transition:none}}
+
 </style>
 </head>
 <body>
@@ -2117,6 +2211,29 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
 </div>
 
 <main class="wrap">
+<section id="tower3d">
+  <p class="t3dtitle">Ajanta Tower &middot; Lucknow</p>
+  <h2 class="t3dhindi">अजंता टावर &mdash; भुगतान स्थिति</h2>
+  <p class="t3dsub">Comprehensive payment status dashboard</p>
+  <div class="t3dbox" id="t3dbox">
+    <div class="t3dstage" id="t3dstage">
+      <div class="t3dcity" aria-hidden="true"></div>
+    </div>
+    <div class="t3dfb" id="t3dfb" aria-hidden="true"></div>
+    <div class="t3dfloors" id="t3dfloors"></div>
+    <div class="t3dlegend" id="t3dlegend"></div>
+    <div class="t3dctl" id="t3dctl" hidden>
+      <button type="button" id="t3dReset">Reset View</button>
+      <button type="button" id="t3dExplode" aria-pressed="false">Exploded View</button>
+      <button type="button" id="t3dFlow" aria-pressed="false">Payment Flow</button>
+      <button type="button" id="t3dSpin" aria-pressed="false">Auto Rotate</button>
+      <button type="button" id="t3dFull" aria-pressed="false">Full Screen</button>
+    </div>
+    <div class="t3dtip" id="t3dtip" role="status"></div>
+    <div class="t3dpanel" id="t3dpanel" aria-live="polite"></div>
+  </div>
+</section>
+
 <section id="plan">
   <div class="shead"><span class="eyebrow">Find your shop</span><h2>What the building feels about you</h2></div>
   <p class="lede">This building has been standing here on somebody's money every single month. It knows who kept it standing and who left it waiting. Find your floor, tap your unit, and read what it has to say to you.</p>
@@ -2296,7 +2413,7 @@ header{background:rgba(226,232,245,.86);border-bottom-color:rgba(11,18,32,.10)}
     The design, code and layout of this website are proprietary to Shucart Enterprises
     and may not be copied, reproduced or reused without written permission.
     The accounts shown belong to Ajanta Services Association.</p>
-    <p class="bstamp">Build v144</p>
+    <p class="bstamp">Build v149</p>
     <div class="tally" id="tally" aria-label="Site activity">
       <b title="Site visits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.4 9.2h17.2M3.4 14.8h17.2"/><ellipse cx="12" cy="12" rx="4.1" ry="9"/></svg><span id="tVisits">—</span></b>
@@ -2316,16 +2433,46 @@ const inr2 = n => "₹" + n.toLocaleString("en-IN",{minimumFractionDigits:2,maxi
 const fdate = s => { if(!s) return "Undated"; const p = s.split("-");
   return (p[2]==="00" ? "" : p[2].replace(/^0/,"")+" ") + MON[+p[1]-1] + " " + p[0].slice(2); };
 /* a token payment against a mostly-open bill counts as red, same as nothing paid */
-function isRed(o){
-  if (o.s !== "none") return false;
-  if (o.p <= 0) return true;
-  return o.dm > 0 && (o.b / o.dm) > 0.7;
+
+/* A freshly raised quarter is owed but not late. Until the last date the colours
+   keep showing where each owner stood on the previous bill; on the day after, the
+   new quarter starts counting like any other money. Worked out in the browser, so
+   it turns over on its own. */
+function dueDate(){
+  /* read when called, never at load: this sits above render(), where DATA and CFG
+     do not exist yet */
+  try { return CFG.dueDate || null; } catch(e){ return null; }
+}
+function inGrace(){
+  const d = dueDate();
+  if (!d) return false;
+  return Date.now() <= new Date(d + "T23:59:59+05:30").getTime();
+}
+function stateOf(o){ return (inGrace() && o.sg) ? o.sg : o.s; }
+function dueLabel(){
+  const d = new Date(dueDate() + "T12:00:00+05:30");
+  const M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return d.getDate() + " " + tr(M[d.getMonth()]);
 }
 
-const CFG = {rate:4, months:6, billFrom:"2026-01", billTo:"2026-06", period:"Jan–Jun", covers:"1 January to 4 August 2026"};
+function quarterDue(o){
+  /* one quarter's charge for this holding */
+  if (o.q3) return o.q3;
+  try { return Math.round((o.a || 0) * CFG.rate * 3); } catch(e){ return 0; }
+}
+function isRed(o){
+  /* Red means two full quarters' money has not come in. A fixed amount, not a
+     share of the bill: the bill grows every quarter, so a ratio would quietly
+     move the line each time. */
+  if (o.b <= 0) return false;
+  const q = quarterDue(o);
+  return q > 0 && o.b >= q * 2;
+}
+
+const CFG = {rate:4, months:9, billFrom:"2026-01", billTo:"2026-09", period:"Jan–Sep", covers:"1 January to 17 August 2026", dueDate:"2026-08-31"};
 
 /* ---- language ---- */
-const HI = {"Ajanta Services Association": "अजंता सर्विसेज़ एसोसिएशन", "Open accounts": "खुला हिसाब", "Your shop": "आपकी दुकान", "Who owes what": "किस पर कितना बकाया", "Pay": "भुगतान", "What next": "आगे क्या", "Spending": "खर्च", "How it works": "व्यवस्था", "Ajanta Tower · Kanpur Road, Lucknow": "अजंता टावर · कानपुर रोड, लखनऊ", "Open accounts ·": "खुला हिसाब ·", "dated entries": "तारीखवार प्रविष्टियाँ", "Accounts to": "हिसाब", "billed": "बिल बना", "Find your shop": "अपनी दुकान देखिए", "What the building feels about you": "अजंता टावर आपसे क्या कहता है", "This building has been standing here on somebody's money every single month. It knows who kept it standing and who left it waiting. Find your floor, tap your unit, and read what it has to say to you.": "यह इमारत हर महीने किसी न किसी के पैसे के सहारे खड़ी रही है। इसे मालूम है कि किसने इसे संभाला और किसने प्रतीक्षा कराई। अपना तल चुनिए, अपनी दुकान पर दबाइए, और पढ़िए कि यह आपसे क्या कहती है।", "Fully paid": "पूर्ण भुगतान", "Almost clear": "लगभग पूरा", "Part paid": "आंशिक भुगतान", "A quarter or more pending": "एक तिमाही या उससे अधिक बकाया", "Nothing paid at all": "अब तक कुछ नहीं", "Tap any shop above to see who owns it, what the bill was, and what is still open.": "ऊपर किसी भी दुकान पर दबाइए — मालिक कौन है, बिल कितना बना और कितना बकाया है, सब यहीं दिखेगा।", "Every owner": "सभी मालिक", "Who has paid, who has not": "किसने भुगतान किया, किसने नहीं", "All": "सभी", "owners on one page — the bill, what has come in, and what is still open. Nothing to tap, nothing hidden.": "मालिक एक ही पन्ने पर — बिल, जमा रकम और बकाया। न कुछ खोलना पड़ेगा, न कुछ छिपा है।", "Largest balance first": "सबसे अधिक बकाया पहले", "Most paid first": "सबसे अधिक जमा पहले", "Largest holding first": "सबसे बड़ा हिस्सा पहले", "A to Z": "नाम के क्रम में", "Find an owner or a shop": "मालिक या दुकान खोजिए", "See every payment received, owner by owner": "प्राप्त हर भुगतान देखिए, मालिक दर मालिक", "Every rupee in the account came from these owners. Their money is what keeps the lights on, the floors clean and the water running.": "खाते का हर रुपया इन्हीं मालिकों से आया है। इन्हीं के पैसे से बत्तियाँ जलती हैं, फर्श साफ रहते हैं और पानी चलता है।", "owners have paid their maintenance so far. Every amount below is money that has actually reached the association's account.": "मालिक अब तक अपना रखरखाव शुल्क जमा कर चुके हैं। नीचे लिखी हर रकम वह पैसा है जो वास्तव में एसोसिएशन के खाते में पहुँचा है।", "Largest contribution first": "सबसे बड़ा योगदान पहले", "Most recent payment first": "नवीनतम भुगतान पहले", "Find a name": "नाम खोजिए", "Cleared in full": "पूरा भुगतान हो चुका", "Paying": "भुगतान कैसे करें", "Clearing your side takes about a minute.": "अपने हिस्से का भुगतान करने में लगभग एक मिनट लगता है।", "Open your shop on the plan above and the exact amount appears with a button that fills your UPI app in for you. Or use the association's account directly.": "ऊपर नक्शे में अपनी दुकान खोलिए — ठीक उतनी रकम के साथ एक बटन आएगा, जो आपका UPI ऐप स्वयं भर देगा। या सीधे एसोसिएशन के खाते में भेजिए।", "Please put your": "कृपया भुगतान के रिमार्क में अपना", "shop number": "दुकान नंबर", "in the payment remark — that is how the entry gets matched to your name in the register. Whatever you send appears here once it reaches the account.": "अवश्य लिखिए — इसी से आपकी प्रविष्टि रजिस्टर में आपके नाम से जुड़ती है। आपका भेजा हुआ पैसा खाते में पहुँचते ही यहाँ दिखने लगेगा।", "UPI": "UPI", "Account name": "खाताधारक", "Account no.": "खाता संख्या", "IFSC": "IFSC", "Bank": "बैंक", "Copy": "कॉपी", "Copied": "कॉपी हो गया", "Due date": "अंतिम तिथि", "After paying": "भुगतान के बाद", "Call": "कॉल", "Balance for": "बकाया", "Opens your UPI app with the amount filled in": "आपका UPI ऐप रकम भरकर खुलेगा", "The road ahead": "आगे का रास्ता", "Where this ends up": "यह कहाँ जाकर रुकेगा", "Two roads, both costed from the same register. No guesswork in the figures below — they are this page's own numbers, divided out.": "दो रास्ते, दोनों का हिसाब उसी रजिस्टर से निकाला हुआ। नीचे के आँकड़ों में कोई अनुमान नहीं है — ये इसी पन्ने के अपने आँकड़े हैं।", "If this carries on": "यदि यही स्थिति रही", "An electricity bill of": "बिजली का", "is already raised, with": "का बिल बन चुका है, और खाते में उससे", "less than that in the account.": "कम है।", "Dark passages and dirty floors are not a maintenance problem for long. They become a tenant problem, then a rent problem.": "अँधेरे गलियारे और गंदे फर्श अधिक दिन रखरखाव की समस्या नहीं रहते। पहले वे किरायेदार की समस्या बनते हैं, फिर किराए की।", "If everyone clears": "यदि सभी भुगतान कर दें", "is all that stands between this building and the list below": "बस इतना ही अजंता टावर और नीचे लिखी हर बात के बीच खड़ा है", "Owed by": "बकाया है", "owners who already have the money. Nothing has to be raised or borrowed.": "मालिकों पर, जिनके पास यह रकम पहले से है। कहीं और से कुछ जुटाने की आवश्यकता नहीं।", "Every bill settled the week it arrives — no vendor kept waiting, no part payments, no favours owed.": "हर बिल का भुगतान उसी सप्ताह जिस सप्ताह वह आए — न कोई ठेकेदार प्रतीक्षा में, न अधूरा भुगतान, न किसी का एहसान।", "Repairs done while they are still small, instead of after something breaks.": "मरम्मत तब हो जब बात छोटी हो, न कि कुछ टूट जाने के बाद।", "Paint, lighting, signage, security, a lift under contract instead of under repair.": "पेंट, रोशनी, साइनबोर्ड, सुरक्षा — और लिफ्ट मरम्मत के भरोसे नहीं, अनुबंध पर।", "On what the tower is worth.": "टावर की कीमत के विषय में।", "Nobody can honestly hand you a percentage, and this page is not going to invent one. Any number you see quoted for a building's future value is somebody's guess dressed up as a fact.": "कोई भी ईमानदारी से आपको कोई प्रतिशत नहीं बता सकता, और यह पन्ना कोई आँकड़ा गढ़ेगा भी नहीं। किसी इमारत की भावी कीमत का जो भी आँकड़ा सुनने में आता है, वह किसी का अनुमान होता है जिसे तथ्य की तरह पेश कर दिया जाता है।", "Both of those are bought with the same ₹4 a square foot.": "ये दोनों उसी ₹4 प्रति वर्ग फुट से खरीदे जाते हैं।", "The building does not get to keep its name for free.": "किसी इमारत को उसका नाम मुफ्त में नहीं मिलता।", "Next quarter": "अगली तिमाही", "If collection carries on exactly like this": "यदि वसूली इसी दर से चलती रही", "Bill to be raised for": "बिल बनेगा", "rate": "दर से संभावित वसूली", "Where the account ends up": "खाता कहाँ पहुँचेगा", "Against that, if every owner clears their side the same quarter closes at": "इसके विपरीत, यदि हर मालिक अपने हिस्से का भुगतान कर दे तो वही तिमाही बंद होगी", ". The difference between those two numbers is not a forecast. It is a decision, taken by 54 people.": " पर। इन दोनों आँकड़ों का अंतर कोई भविष्यवाणी नहीं है — यह 54 लोगों का लिया हुआ निर्णय है।", "The three numbers": "तीन आँकड़े", "In, out, and what is left": "आया, गया, और बचा", "Everything on this page reduces to these three, and they are the easiest three to check.": "इस पन्ने की हर बात इन्हीं तीन में सिमट जाती है, और इन्हीं तीन को जाँचना सबसे आसान है।", "Collected": "जमा", "Maintenance received from owners": "मालिकों से प्राप्त रखरखाव शुल्क", "Spent on the building": "इमारत पर खर्च", "Across": "कुल", "itemised bills": "बिलों में", "Left in the account": "खाते में शेष", "Against the bills already raised": "बन चुके बिलों के मुकाबले", "The register": "रजिस्टर", "Every rupee spent": "खर्च हुआ हर रुपया", "The complete spending list. Search a word like": "खर्च की पूरी सूची। कोई शब्द खोजिए, जैसे", "plumber": "plumber", "or": "या", "electricity": "electricity", ", or filter by head.": " — या मद के अनुसार छाँटिए।", "Month by month": "महीनेवार", "Latest month first": "नवीनतम महीना पहले", "Biggest bill first": "सबसे बड़ा बिल पहले", "Search a payee": "किसे भुगतान हुआ, खोजिए", "Timeline": "समयरेखा", "What came in against what went out. Tap a month to read that month's bills.": "कितना आया और कितना गया। किसी महीने पर दबाकर उस महीने के बिल पढ़िए।", "Received": "प्राप्त", "Spent": "खर्च हुआ", "The method": "हमारी व्यवस्था", "How your money is handled": "आपके पैसे का हिसाब कैसे रखा जाता है", "The rules we follow, written down so you can hold us to them.": "हम जिन नियमों पर चलते हैं, लिखित रूप में — ताकि आप हमसे इनका हिसाब माँग सकें।", "One rate for everyone": "सबके लिए एक दर", "per sq ft per month, billed every quarter. Big shop or small, nobody pays a different rate.": "प्रति वर्ग फुट प्रति माह, बिल हर तिमाही। दुकान बड़ी हो या छोटी, दर सबके लिए एक ही है।", "One account, checked twice": "एक खाता, दो बार जाँचा हुआ", "Collections go into the association's bank account, and every payment has been matched line by line against the bank statement.": "वसूली एसोसिएशन के बैंक खाते में जाती है, और हर भुगतान बैंक स्टेटमेंट से एक-एक पंक्ति मिलाकर जाँचा गया है।", "Nobody draws a salary": "कोई वेतन नहीं लेता", "No office bearer takes a fee, commission or allowance from this money. Every entry in the register is a bill paid to an outside vendor.": "कोई पदाधिकारी इस पैसे से न शुल्क लेता है, न कमीशन, न भत्ता। रजिस्टर की हर प्रविष्टि किसी बाहरी ठेकेदार को किया गया भुगतान है।", "Spent on the building only": "खर्च केवल इमारत पर", "Housekeeping, electricity, plumbing, the water motor and lights. The four heads above cover every rupee — there is no fifth.": "सफाई, बिजली, प्लंबिंग, पानी की मोटर और बत्तियाँ। ऊपर की चार मदों में हर रुपया आ जाता है — पाँचवीं कोई मद नहीं है।", "What is left, stays": "जो बचा, वह बचा रहता है", "Unspent money sits in the account for the next quarter's bills. It is not moved, lent or adjusted against anyone.": "बिना खर्च हुआ पैसा अगली तिमाही के बिलों के लिए खाते में पड़ा रहता है। न वह कहीं भेजा जाता है, न किसी को दिया जाता है, न किसी के नाम समायोजित किया जाता है।", "Come and check": "आइए, स्वयं जाँच लीजिए", "Bills, receipts and the bank statement are open to any owner. If a figure here looks wrong, say so and it gets corrected in the open.": "बिल, रसीदें और बैंक स्टेटमेंट हर मालिक के लिए खुले हैं। यहाँ कोई आँकड़ा गलत लगे तो बताइए — सबके सामने सुधारा जाएगा।", "Figures cover": "आँकड़ों की अवधि:", ". Spending of ₹54,710 up to February — January's material and light purchases, early plumbing and the February housekeeping bill — was paid in cash before the association's bank account became operational.": "। फरवरी तक का ₹54,710 का खर्च — जनवरी में सामग्री और बत्तियों की खरीद, शुरुआती प्लंबिंग तथा फरवरी का सफाई बिल — एसोसिएशन का बैंक खाता चालू होने से पहले नकद भुगतान किया गया था।", "· UGF-6, Ajanta Tower, Bargawan, Hind Nagar, Kanpur Road, Lucknow": "· UGF-6, अजंता टावर, बरगवाँ, हिंद नगर, कानपुर रोड, लखनऊ", "Cleared": "पूर्ण", "Behind": "पीछे", "Nothing paid": "कुछ नहीं दिया", "Everyone": "सब मालिक", "still open": "बकाया शेष", "cleared": "भुगतान पूर्ण", "in credit": "जमा अधिक", "Now showing": "अभी दिखाया जा रहा है", "bill": "बिल", "bills": "बिलों", "tap to open": "खोलने के लिए दबाइए", "nothing open": "कुछ बकाया नहीं", "open": "शेष", "of": "में से", "owners shown": "मालिक दिखाए गए", "still open between them": "इन सब पर कुल बकाया", "day": "दिन", "days": "दिनों", "Site visits": "साइट पर आगंतुक", "Shops opened on the floor plan": "नक्शे पर खोली गई दुकानें", "Tap the one you want": "जो चाहिए उस पर दबाइए", "Within": "बिल बनने की तारीख से", "of the bill being raised.": "के भीतर।", "Send the receipt to": "रसीद भेजिए", "so your entry is matched the same day.": "को — प्रविष्टि उसी दिन मिला दी जाएगी।", "The association has been able to spend only": "एसोसिएशन महीने में केवल", "a month, averaged over the whole months from": "ही खर्च कर सका है — यह औसत इन पूरे महीनों का है:", "That is not what the building needs. That is what the money allowed.": "यह वह रकम नहीं जो इमारत को चाहिए। यह वह रकम है जितनी पैसे ने अनुमति दी।", "Three months at the current rate of spending": "वर्तमान दर से तीन महीने का खर्च", "Miscellaneous": "विविध", "Bank minimum-balance charges and Nagar Nigam payments. The only spending not done on the building itself, and deliberately kept tiny.": "बैंक का न्यूनतम-शेष शुल्क और नगर निगम के भुगतान। यही एकमात्र खर्च है जो सीधे इमारत पर नहीं हुआ, और इसे जानबूझकर न्यूनतम रखा गया है।", "Fully paid — thank you": "पूरा भुगतान — धन्यवाद", "Almost clear — thank you": "लगभग पूरा — धन्यवाद", "Part payment received": "आंशिक भुगतान प्राप्त", "Nothing received yet": "अब तक कोई भुगतान नहीं", "Almost nothing paid": "नाममात्र भुगतान", "More than a full quarter still pending": "पूरी एक तिमाही से अधिक बकाया", "Shop": "दुकान", "Held by": "मालिक", "All shops held": "कुल दुकानें", "Total area": "कुल क्षेत्रफल", "Bill adjustment": "बिल में समायोजन", "Note": "टिप्पणी", "Paid": "जमा किया", "Pending": "कुल बकाया", "sq ft": "वर्ग फुट", "Nil": "शून्य", "Payments received": "प्राप्त भुगतान", "No payment received yet": "अब तक कोई भुगतान प्राप्त नहीं", "Proud owner of Ajanta Tower": "अजंता टावर के गौरव स्तंभ", "Pick a floor, then tap your shop": "पहले तल चुनिए, फिर अपनी दुकान पर दबाइए", "Billed Jan–Jun": "बिल Jan–Jun", "PAID": "जमा हुआ", "ji, you have cleared the whole bill. This is the money that pays the housekeeping staff, the electricity and every repair in this building.": "जी, आपने पूरे बिल का भुगतान कर दिया है। इसी पैसे से सफाई कर्मचारियों का वेतन, बिजली और इस इमारत की हर मरम्मत का खर्च चलता है।", "ji, about a month's maintenance is left on your side, and in our book that is as good as clear. Thank you for keeping it current — this is what a paid-up building looks like.": "जी, आपकी ओर लगभग एक महीने का रखरखाव बाकी है, और हमारे हिसाब में यह पूर्ण भुगतान के बराबर ही है। समय पर भुगतान करते रहने के लिए धन्यवाद — जिस इमारत का भुगतान पूरा होता है, वह ऐसी ही दिखती है।", "ji, you have paid a good part of the bill, and roughly": "जी, आपने बिल के बड़े हिस्से का भुगतान कर दिया है, और लगभग", "Ajanta Tower asked for by name — and that is exactly what your square feet are worth.": "अजंता टावर, जिसे किरायेदार नाम लेकर माँगें — आपके वर्ग फुट की कीमत यही तय करती है।", "ji, this shop is yours, and more than 70% of its upkeep is still unpaid. A token amount does not hold up Ajanta Tower. This is the cost of keeping your own property in the condition you bought it for. Your shop carries the name of Ajanta Tower; when that name slips, your rent slips with it and your resale price after that. Please close the rest now, while it is still a small number.": "जी, यह दुकान आपकी है, और इसके रखरखाव का 70% से अधिक अब भी बाकी है। नाममात्र रकम से अजंता टावर नहीं संभलता। यह खर्च आपकी अपनी संपत्ति को उसी हालत में रखने का है जिसके लिए आपने उसे खरीदा था। आपकी दुकान अजंता टावर का नाम लेकर चलती है; वह नाम फिसला तो किराया उसके साथ फिसलेगा, और उसके बाद बिक्री की कीमत भी। शेष राशि का भुगतान अभी करें, जब तक वह छोटी है।", "months of the upkeep of your own shop is still open. Every rupee you sent went straight back into the property you own. Please close the rest now, while the amount is still small. What the name of Ajanta Tower is worth, you understand better than most.": "महीने का रखरखाव आपकी अपनी दुकान पर अब भी बाकी है। आपका भेजा हर रुपया सीधे उसी संपत्ति में लौटा जो आपकी है। शेष राशि का भुगतान अभी करें, जब तक वह छोटी है। अजंता टावर के नाम की कीमत आप सबसे बेहतर समझते हैं।", "What can be said plainly is this. Ajanta Tower moves on two things — whether tenants want to be in it, and whether a buyer believes it has been looked after.": "स्पष्ट बात इतनी है। अजंता टावर की कीमत दो बातों पर टिकी है — किरायेदार यहाँ रहना चाहते हैं या नहीं, और खरीदार को भरोसा है या नहीं कि इसकी देखभाल होती रही है।", "Ajanta Tower gains value": "अजंता टावर की कीमत बढ़ती है", "Ajanta Tower loses its name": "अजंता टावर अपना नाम खो देता है", "Without your money it goes dark — and a dark Ajanta Tower loses value every single month.": "आपके पैसे के बिना यह अँधेरे में चला जाता है — और अँधेरा अजंता टावर हर महीने कीमत खोता है।", "ji, this shop is yours, and this money is the upkeep of your own property. Your shop stands in the walls of Ajanta Tower, opens on to its plaza and is known by its name. When the name of Ajanta Tower falls, your shop falls twice — once in the rent it can ask, and again in the price it can fetch. Nothing has come from your side yet. Perhaps it simply slipped past; that happens. But whatever Ajanta Tower looks like today is the result of that waiting. Clearing it now keeps Ajanta Tower worth what you paid to be part of it.": "जी, यह दुकान आपकी है, और यह पैसा आपकी अपनी संपत्ति के रखरखाव का खर्च है। आपकी दुकान अजंता टावर की इन्हीं दीवारों में है, इसी पते पर खुलती है और इसी नाम से पहचानी जाती है। अजंता टावर का नाम गिरा तो आपकी दुकान दो बार गिरती है — एक बार उस किराए में जो वह माँग सकती है, दूसरी बार उस कीमत में जो उसे मिल सकती है। आपकी ओर से अब तक कुछ प्राप्त नहीं हुआ है। संभव है ध्यान न गया हो; ऐसा हो जाता है। पर अजंता टावर आज जैसा दिखता है, वह इसी प्रतीक्षा का परिणाम है। अभी भुगतान कर देना अजंता टावर को वही बनाए रखता है, जिसके लिए आपने पैसा लगाया था।", "ji, this shop is yours, and a whole quarter or more of its upkeep is standing open. You have paid before, so you already know what this money does — it keeps your own property running. Your shop lives inside Ajanta Tower and carries its name. Let that name slip and your shop pays for it twice, in the rent it can ask and in the price it can fetch. You saw what Ajanta Tower was worth once. Please clear the rest now.": "जी, यह दुकान आपकी है, और इसके रखरखाव की पूरी एक तिमाही या उससे अधिक बकाया खड़ी है। आप पहले भुगतान कर चुके हैं, इसलिए आप जानते हैं कि यह पैसा क्या करता है — यह आपकी अपनी संपत्ति को चलाता है। आपकी दुकान अजंता टावर के भीतर है और इसी का नाम ढोती है। वह नाम फिसलने दिया तो दुकान दो बार भरपाई करती है — उस किराए में जो वह माँग सकती है, और उस कीमत में जो उसे मिल सकती है। इस पते की कीमत आपने एक बार पहचानी थी। शेष राशि का भुगतान अभी करें।", "Pay with": "किस ऐप से भेजें", "Google Pay": "Google Pay", "PhonePe": "PhonePe", "Paytm": "Paytm", "paid · nothing pending": "भुगतान पूर्ण · कोई बकाया नहीं", "On a computer these app buttons will not open anything. Scan the QR with your phone, or use the account details beside it.": "कंप्यूटर पर ये ऐप बटन काम नहीं करेंगे। अपने फोन से QR स्कैन कीजिए, या साथ दिए खाते के विवरण का उपयोग कीजिए।", "Money in": "आया", "Money out": "गया", "payment": "भुगतान से", "payments": "भुगतानों से", "Hello": "नमस्ते", "ji": "जी", "Bill": "बिल राशि", "Send": "भेजें", "Send thanks": "धन्यवाद भेजें", "Loading the owner list": "मालिकों की सूची तैयार हो रही है", "Your maintenance for Ajanta Tower — the details and the payment button are here:": "अजंता टावर का आपका रखरखाव शुल्क — पूरा विवरण और भुगतान का बटन यहाँ है:", "Your Ajanta Tower account is fully cleared. Thank you — the details are here:": "अजंता टावर में आपका भुगतान पूर्ण है। धन्यवाद — विवरण यहाँ है:", "__N__ of __T__ owners owe nothing. Between them they have put in __A__ — that is what the building has been running on.": "__T__ में से __N__ मालिकों पर कोई बकाया नहीं। इन सबने मिलाकर __A__ जमा किए हैं — अजंता टावर इसी पैसे से चल रहा है।", "__HEAD__ is the single biggest line at __AMT__ — it is the first thing that has to stop.": "सबसे बड़ा खर्च __HEAD__ है — __AMT__। पैसा घटा तो सबसे पहले यही रुकेगा।", "Cleaning": "सफाई", "Electricity": "बिजली", "Repairs": "मरम्मत", "Tap a shop to see what its colour means": "किसी दुकान पर दबाइए — उसका रंग क्या कहता है, यहाँ पढ़िए", "Your money goes first to keeping this place clean. Please clear the balance — Ajanta Tower keeps its good name, and a Swachh Bharat, a Swasth Bharat begins at your own address.": "आपका यह पैसा सबसे पहले सफाई पर लगता है। शेष राशि का भुगतान करें — अजंता टावर सम्मानित रहेगा, और स्वच्छ भारत, स्वस्थ भारत की शुरुआत अपने ही पते से होती है।", "Welcome to the Ajanta Tower website.": "अजंता टावर की वेबसाइट में आपका स्वागत है।", "This site exists so the accounts stay in front of you at all times — what came in, what went out, and what is left. Nothing is filed away and nothing waits for a meeting.": "यह वेबसाइट इसलिए बनाई गई है कि हिसाब हर समय आपके सामने रहे — क्या आया, क्या गया, और क्या बचा। न कुछ फाइल में बंद रहता है, न किसी बैठक का इंतज़ार करता है।", "Where every ₹100 has gone so far": "अब तक हर ₹100 कहाँ गया", "The split so far": "अब तक का बँटवारा", "Take any ₹100 that reached the association. This is exactly what happened to it, from the first day to today. Tap a colour to see the bills behind it.": "एसोसिएशन तक पहुँचे किसी भी ₹100 को लीजिए — पहले दिन से आज तक उसके साथ ठीक यही हुआ है। किसी रंग पर दबाकर उसके पीछे के बिल देखिए।", "And did you know? Of __T__ owners, only __N__ are keeping this tower running. Their __PAID__ has paid for every cleaning bill, every light and every repair since January. Ajanta Tower is billed for __SPAN__ at ₹__RATE__ a square foot a month, and __OPEN__ of it has still not come in.": "और क्या आपको पता है? इन __T__ मालिकों में से केवल __N__ ही इस टावर को चला रहे हैं। इन्हीं के __PAID__ से जनवरी से अब तक की हर सफाई, हर बत्ती और हर मरम्मत का बिल चुकाया गया है। अजंता टावर पर __SPAN__ का बिल ₹__RATE__ प्रति वर्ग फुट प्रति माह की दर से बना, और उसमें से __OPEN__ अब तक जमा नहीं हुआ।", "shops": "दुकानें", "owners on this floor": "मालिक इस तल पर", "collected": "वसूली", "short of the bills already raised": "बन चुके बिलों से इतना कम है", "more than the bills already raised": "बन चुके बिलों से इतना अधिक है", "is what the association is holding, against the bills below.": "एसोसिएशन के खाते में है, नीचे लिखे बिलों के मुकाबले।", "Likely to come in, at the current": "मौजूदा", "Scan this to pay": "भुगतान के लिए यह QR स्कैन कीजिए", "Open any UPI app, scan, and the amount is already filled in.": "कोई भी UPI ऐप खोलिए, स्कैन कीजिए — रकम पहले से भरी हुई आएगी।", "Google Pay, PhonePe, Paytm — any of them will read it.": "Google Pay, PhonePe, Paytm — किसी से भी स्कैन कर सकते हैं।", "Quarterly bills": "तिमाही बिल", "April to June 2026": "अप्रैल से जून 2026", "January to March 2026": "जनवरी से मार्च 2026", "Happy Independence Day": "स्वतंत्रता दिवस की हार्दिक शुभकामनाएँ", "A clean India and a healthy India begin at your own address.": "स्वच्छ भारत और स्वस्थ भारत की शुरुआत अपने ही पते से होती है।"};
+const HI = {"Ajanta Services Association": "अजंता सर्विसेज़ एसोसिएशन", "Open accounts": "खुला हिसाब", "Your shop": "आपकी दुकान", "Who owes what": "किस पर कितना बकाया", "Pay": "भुगतान", "What next": "आगे क्या", "Spending": "खर्च", "How it works": "व्यवस्था", "Ajanta Tower · Kanpur Road, Lucknow": "अजंता टावर · कानपुर रोड, लखनऊ", "Open accounts ·": "खुला हिसाब ·", "dated entries": "तारीखवार प्रविष्टियाँ", "Accounts to": "हिसाब", "billed": "बिल बना", "Find your shop": "अपनी दुकान देखिए", "What the building feels about you": "अजंता टावर आपसे क्या कहता है", "This building has been standing here on somebody's money every single month. It knows who kept it standing and who left it waiting. Find your floor, tap your unit, and read what it has to say to you.": "यह इमारत हर महीने किसी न किसी के पैसे के सहारे खड़ी रही है। इसे मालूम है कि किसने इसे संभाला और किसने प्रतीक्षा कराई। अपना तल चुनिए, अपनी दुकान पर दबाइए, और पढ़िए कि यह आपसे क्या कहती है।", "Fully paid": "पूर्ण भुगतान", "Almost clear": "लगभग पूरा", "Part paid": "आंशिक भुगतान", "A quarter or more pending": "एक तिमाही या उससे अधिक बकाया", "Nothing paid at all": "अब तक कुछ नहीं", "Tap any shop above to see who owns it, what the bill was, and what is still open.": "ऊपर किसी भी दुकान पर दबाइए — मालिक कौन है, बिल कितना बना और कितना बकाया है, सब यहीं दिखेगा।", "Every owner": "सभी मालिक", "Who has paid, who has not": "किसने भुगतान किया, किसने नहीं", "All": "सभी", "owners on one page — the bill, what has come in, and what is still open. Nothing to tap, nothing hidden.": "मालिक एक ही पन्ने पर — बिल, जमा रकम और बकाया। न कुछ खोलना पड़ेगा, न कुछ छिपा है।", "Largest balance first": "सबसे अधिक बकाया पहले", "Most paid first": "सबसे अधिक जमा पहले", "Largest holding first": "सबसे बड़ा हिस्सा पहले", "A to Z": "नाम के क्रम में", "Find an owner or a shop": "मालिक या दुकान खोजिए", "See every payment received, owner by owner": "प्राप्त हर भुगतान देखिए, मालिक दर मालिक", "Every rupee in the account came from these owners. Their money is what keeps the lights on, the floors clean and the water running.": "खाते का हर रुपया इन्हीं मालिकों से आया है। इन्हीं के पैसे से बत्तियाँ जलती हैं, फर्श साफ रहते हैं और पानी चलता है।", "owners have paid their maintenance so far. Every amount below is money that has actually reached the association's account.": "मालिक अब तक अपना रखरखाव शुल्क जमा कर चुके हैं। नीचे लिखी हर रकम वह पैसा है जो वास्तव में एसोसिएशन के खाते में पहुँचा है।", "Largest contribution first": "सबसे बड़ा योगदान पहले", "Most recent payment first": "नवीनतम भुगतान पहले", "Find a name": "नाम खोजिए", "Cleared in full": "पूरा भुगतान हो चुका", "Paying": "भुगतान कैसे करें", "Clearing your side takes about a minute.": "अपने हिस्से का भुगतान करने में लगभग एक मिनट लगता है।", "Open your shop on the plan above and the exact amount appears with a button that fills your UPI app in for you. Or use the association's account directly.": "ऊपर नक्शे में अपनी दुकान खोलिए — ठीक उतनी रकम के साथ एक बटन आएगा, जो आपका UPI ऐप स्वयं भर देगा। या सीधे एसोसिएशन के खाते में भेजिए।", "Please put your": "कृपया भुगतान के रिमार्क में अपना", "shop number": "दुकान नंबर", "in the payment remark — that is how the entry gets matched to your name in the register. Whatever you send appears here once it reaches the account.": "अवश्य लिखिए — इसी से आपकी प्रविष्टि रजिस्टर में आपके नाम से जुड़ती है। आपका भेजा हुआ पैसा खाते में पहुँचते ही यहाँ दिखने लगेगा।", "UPI": "UPI", "Account name": "खाताधारक", "Account no.": "खाता संख्या", "IFSC": "IFSC", "Bank": "बैंक", "Copy": "कॉपी", "Copied": "कॉपी हो गया", "Due date": "अंतिम तिथि", "After paying": "भुगतान के बाद", "Call": "कॉल", "Balance for": "बकाया", "Opens your UPI app with the amount filled in": "आपका UPI ऐप रकम भरकर खुलेगा", "The road ahead": "आगे का रास्ता", "Where this ends up": "यह कहाँ जाकर रुकेगा", "Two roads, both costed from the same register. No guesswork in the figures below — they are this page's own numbers, divided out.": "दो रास्ते, दोनों का हिसाब उसी रजिस्टर से निकाला हुआ। नीचे के आँकड़ों में कोई अनुमान नहीं है — ये इसी पन्ने के अपने आँकड़े हैं।", "If this carries on": "यदि यही स्थिति रही", "An electricity bill of": "बिजली का", "is already raised, with": "का बिल बन चुका है, और खाते में उससे", "less than that in the account.": "कम है।", "Dark passages and dirty floors are not a maintenance problem for long. They become a tenant problem, then a rent problem.": "अँधेरे गलियारे और गंदे फर्श अधिक दिन रखरखाव की समस्या नहीं रहते। पहले वे किरायेदार की समस्या बनते हैं, फिर किराए की।", "If everyone clears": "यदि सभी भुगतान कर दें", "is all that stands between this building and the list below": "बस इतना ही अजंता टावर और नीचे लिखी हर बात के बीच खड़ा है", "Owed by": "बकाया है", "owners who already have the money. Nothing has to be raised or borrowed.": "मालिकों पर, जिनके पास यह रकम पहले से है। कहीं और से कुछ जुटाने की आवश्यकता नहीं।", "Every bill settled the week it arrives — no vendor kept waiting, no part payments, no favours owed.": "हर बिल का भुगतान उसी सप्ताह जिस सप्ताह वह आए — न कोई ठेकेदार प्रतीक्षा में, न अधूरा भुगतान, न किसी का एहसान।", "Repairs done while they are still small, instead of after something breaks.": "मरम्मत तब हो जब बात छोटी हो, न कि कुछ टूट जाने के बाद।", "Paint, lighting, signage, security, a lift under contract instead of under repair.": "पेंट, रोशनी, साइनबोर्ड, सुरक्षा — और लिफ्ट मरम्मत के भरोसे नहीं, अनुबंध पर।", "On what the tower is worth.": "टावर की कीमत के विषय में।", "Nobody can honestly hand you a percentage, and this page is not going to invent one. Any number you see quoted for a building's future value is somebody's guess dressed up as a fact.": "कोई भी ईमानदारी से आपको कोई प्रतिशत नहीं बता सकता, और यह पन्ना कोई आँकड़ा गढ़ेगा भी नहीं। किसी इमारत की भावी कीमत का जो भी आँकड़ा सुनने में आता है, वह किसी का अनुमान होता है जिसे तथ्य की तरह पेश कर दिया जाता है।", "Both of those are bought with the same ₹4 a square foot.": "ये दोनों उसी ₹4 प्रति वर्ग फुट से खरीदे जाते हैं।", "The building does not get to keep its name for free.": "किसी इमारत को उसका नाम मुफ्त में नहीं मिलता।", "Next quarter": "अगली तिमाही", "If collection carries on exactly like this": "यदि वसूली इसी दर से चलती रही", "Bill to be raised for": "बिल बनेगा", "rate": "दर से संभावित वसूली", "Where the account ends up": "खाता कहाँ पहुँचेगा", "Against that, if every owner clears their side the same quarter closes at": "इसके विपरीत, यदि हर मालिक अपने हिस्से का भुगतान कर दे तो वही तिमाही बंद होगी", ". The difference between those two numbers is not a forecast. It is a decision, taken by 54 people.": " पर। इन दोनों आँकड़ों का अंतर कोई भविष्यवाणी नहीं है — यह 54 लोगों का लिया हुआ निर्णय है।", "The three numbers": "तीन आँकड़े", "In, out, and what is left": "आया, गया, और बचा", "Everything on this page reduces to these three, and they are the easiest three to check.": "इस पन्ने की हर बात इन्हीं तीन में सिमट जाती है, और इन्हीं तीन को जाँचना सबसे आसान है।", "Collected": "जमा", "Maintenance received from owners": "मालिकों से प्राप्त रखरखाव शुल्क", "Spent on the building": "इमारत पर खर्च", "Across": "कुल", "itemised bills": "बिलों में", "Left in the account": "खाते में शेष", "Against the bills already raised": "बन चुके बिलों के मुकाबले", "The register": "रजिस्टर", "Every rupee spent": "खर्च हुआ हर रुपया", "The complete spending list. Search a word like": "खर्च की पूरी सूची। कोई शब्द खोजिए, जैसे", "plumber": "plumber", "or": "या", "electricity": "electricity", ", or filter by head.": " — या मद के अनुसार छाँटिए।", "Month by month": "महीनेवार", "Latest month first": "नवीनतम महीना पहले", "Biggest bill first": "सबसे बड़ा बिल पहले", "Search a payee": "किसे भुगतान हुआ, खोजिए", "Timeline": "समयरेखा", "What came in against what went out. Tap a month to read that month's bills.": "कितना आया और कितना गया। किसी महीने पर दबाकर उस महीने के बिल पढ़िए।", "Received": "प्राप्त", "Spent": "खर्च हुआ", "The method": "हमारी व्यवस्था", "How your money is handled": "आपके पैसे का हिसाब कैसे रखा जाता है", "The rules we follow, written down so you can hold us to them.": "हम जिन नियमों पर चलते हैं, लिखित रूप में — ताकि आप हमसे इनका हिसाब माँग सकें।", "One rate for everyone": "सबके लिए एक दर", "per sq ft per month, billed every quarter. Big shop or small, nobody pays a different rate.": "प्रति वर्ग फुट प्रति माह, बिल हर तिमाही। दुकान बड़ी हो या छोटी, दर सबके लिए एक ही है।", "One account, checked twice": "एक खाता, दो बार जाँचा हुआ", "Collections go into the association's bank account, and every payment has been matched line by line against the bank statement.": "वसूली एसोसिएशन के बैंक खाते में जाती है, और हर भुगतान बैंक स्टेटमेंट से एक-एक पंक्ति मिलाकर जाँचा गया है।", "Nobody draws a salary": "कोई वेतन नहीं लेता", "No office bearer takes a fee, commission or allowance from this money. Every entry in the register is a bill paid to an outside vendor.": "कोई पदाधिकारी इस पैसे से न शुल्क लेता है, न कमीशन, न भत्ता। रजिस्टर की हर प्रविष्टि किसी बाहरी ठेकेदार को किया गया भुगतान है।", "Spent on the building only": "खर्च केवल इमारत पर", "Housekeeping, electricity, plumbing, the water motor and lights. The four heads above cover every rupee — there is no fifth.": "सफाई, बिजली, प्लंबिंग, पानी की मोटर और बत्तियाँ। ऊपर की चार मदों में हर रुपया आ जाता है — पाँचवीं कोई मद नहीं है।", "What is left, stays": "जो बचा, वह बचा रहता है", "Unspent money sits in the account for the next quarter's bills. It is not moved, lent or adjusted against anyone.": "बिना खर्च हुआ पैसा अगली तिमाही के बिलों के लिए खाते में पड़ा रहता है। न वह कहीं भेजा जाता है, न किसी को दिया जाता है, न किसी के नाम समायोजित किया जाता है।", "Come and check": "आइए, स्वयं जाँच लीजिए", "Bills, receipts and the bank statement are open to any owner. If a figure here looks wrong, say so and it gets corrected in the open.": "बिल, रसीदें और बैंक स्टेटमेंट हर मालिक के लिए खुले हैं। यहाँ कोई आँकड़ा गलत लगे तो बताइए — सबके सामने सुधारा जाएगा।", "Figures cover": "आँकड़ों की अवधि:", ". Spending of ₹54,710 up to February — January's material and light purchases, early plumbing and the February housekeeping bill — was paid in cash before the association's bank account became operational.": "। फरवरी तक का ₹54,710 का खर्च — जनवरी में सामग्री और बत्तियों की खरीद, शुरुआती प्लंबिंग तथा फरवरी का सफाई बिल — एसोसिएशन का बैंक खाता चालू होने से पहले नकद भुगतान किया गया था।", "· UGF-6, Ajanta Tower, Bargawan, Hind Nagar, Kanpur Road, Lucknow": "· UGF-6, अजंता टावर, बरगवाँ, हिंद नगर, कानपुर रोड, लखनऊ", "Cleared": "पूर्ण", "Behind": "पीछे", "Nothing paid": "कुछ नहीं दिया", "Everyone": "सब मालिक", "still open": "बकाया शेष", "cleared": "भुगतान पूर्ण", "in credit": "जमा अधिक", "Now showing": "अभी दिखाया जा रहा है", "bill": "बिल", "bills": "बिलों", "tap to open": "खोलने के लिए दबाइए", "nothing open": "कुछ बकाया नहीं", "open": "शेष", "of": "में से", "owners shown": "मालिक दिखाए गए", "still open between them": "इन सब पर कुल बकाया", "day": "दिन", "days": "दिनों", "Site visits": "साइट पर आगंतुक", "Shops opened on the floor plan": "नक्शे पर खोली गई दुकानें", "Tap the one you want": "जो चाहिए उस पर दबाइए", "Within": "बिल बनने की तारीख से", "of the bill being raised.": "के भीतर।", "Send the receipt to": "रसीद भेजिए", "so your entry is matched the same day.": "को — प्रविष्टि उसी दिन मिला दी जाएगी।", "The association has been able to spend only": "एसोसिएशन महीने में केवल", "a month, averaged over the whole months from": "ही खर्च कर सका है — यह औसत इन पूरे महीनों का है:", "That is not what the building needs. That is what the money allowed.": "यह वह रकम नहीं जो इमारत को चाहिए। यह वह रकम है जितनी पैसे ने अनुमति दी।", "Three months at the current rate of spending": "वर्तमान दर से तीन महीने का खर्च", "Miscellaneous": "विविध", "Bank minimum-balance charges and Nagar Nigam payments. The only spending not done on the building itself, and deliberately kept tiny.": "बैंक का न्यूनतम-शेष शुल्क और नगर निगम के भुगतान। यही एकमात्र खर्च है जो सीधे इमारत पर नहीं हुआ, और इसे जानबूझकर न्यूनतम रखा गया है।", "Fully paid — thank you": "पूरा भुगतान — धन्यवाद", "Almost clear — thank you": "लगभग पूरा — धन्यवाद", "Part payment received": "आंशिक भुगतान प्राप्त", "Nothing received yet": "अब तक कोई भुगतान नहीं", "Almost nothing paid": "नाममात्र भुगतान", "More than a full quarter still pending": "पूरी एक तिमाही से अधिक बकाया", "Shop": "दुकान", "Held by": "मालिक", "All shops held": "कुल दुकानें", "Total area": "कुल क्षेत्रफल", "Bill adjustment": "बिल में समायोजन", "Note": "टिप्पणी", "Paid": "जमा किया", "Pending": "कुल बकाया", "sq ft": "वर्ग फुट", "Nil": "शून्य", "Payments received": "प्राप्त भुगतान", "No payment received yet": "अब तक कोई भुगतान प्राप्त नहीं", "Proud owner of Ajanta Tower": "अजंता टावर के गौरव स्तंभ", "Pick a floor, then tap your shop": "पहले तल चुनिए, फिर अपनी दुकान पर दबाइए", "Billed Jan–Jun": "बिल Jan–Jun", "PAID": "जमा हुआ", "ji, you have cleared the whole bill. This is the money that pays the housekeeping staff, the electricity and every repair in this building.": "जी, आपने पूरे बिल का भुगतान कर दिया है। इसी पैसे से सफाई कर्मचारियों का वेतन, बिजली और इस इमारत की हर मरम्मत का खर्च चलता है।", "ji, about a month's maintenance is left on your side, and in our book that is as good as clear. Thank you for keeping it current — this is what a paid-up building looks like.": "जी, आपकी ओर लगभग एक महीने का रखरखाव बाकी है, और हमारे हिसाब में यह पूर्ण भुगतान के बराबर ही है। समय पर भुगतान करते रहने के लिए धन्यवाद — जिस इमारत का भुगतान पूरा होता है, वह ऐसी ही दिखती है।", "ji, you have paid a good part of the bill, and roughly": "जी, आपने बिल के बड़े हिस्से का भुगतान कर दिया है, और लगभग", "Ajanta Tower asked for by name — and that is exactly what your square feet are worth.": "अजंता टावर, जिसे किरायेदार नाम लेकर माँगें — आपके वर्ग फुट की कीमत यही तय करती है।", "ji, this shop is yours, and more than 70% of its upkeep is still unpaid. A token amount does not hold up Ajanta Tower. This is the cost of keeping your own property in the condition you bought it for. Your shop carries the name of Ajanta Tower; when that name slips, your rent slips with it and your resale price after that. Please close the rest now, while it is still a small number.": "जी, यह दुकान आपकी है, और इसके रखरखाव का 70% से अधिक अब भी बाकी है। नाममात्र रकम से अजंता टावर नहीं संभलता। यह खर्च आपकी अपनी संपत्ति को उसी हालत में रखने का है जिसके लिए आपने उसे खरीदा था। आपकी दुकान अजंता टावर का नाम लेकर चलती है; वह नाम फिसला तो किराया उसके साथ फिसलेगा, और उसके बाद बिक्री की कीमत भी। शेष राशि का भुगतान अभी करें, जब तक वह छोटी है।", "months of the upkeep of your own shop is still open. Every rupee you sent went straight back into the property you own. Please close the rest now, while the amount is still small. What the name of Ajanta Tower is worth, you understand better than most.": "महीने का रखरखाव आपकी अपनी दुकान पर अब भी बाकी है। आपका भेजा हर रुपया सीधे उसी संपत्ति में लौटा जो आपकी है। शेष राशि का भुगतान अभी करें, जब तक वह छोटी है। अजंता टावर के नाम की कीमत आप सबसे बेहतर समझते हैं।", "What can be said plainly is this. Ajanta Tower moves on two things — whether tenants want to be in it, and whether a buyer believes it has been looked after.": "स्पष्ट बात इतनी है। अजंता टावर की कीमत दो बातों पर टिकी है — किरायेदार यहाँ रहना चाहते हैं या नहीं, और खरीदार को भरोसा है या नहीं कि इसकी देखभाल होती रही है।", "Ajanta Tower gains value": "अजंता टावर की कीमत बढ़ती है", "Ajanta Tower loses its name": "अजंता टावर अपना नाम खो देता है", "Without your money it goes dark — and a dark Ajanta Tower loses value every single month.": "आपके पैसे के बिना यह अँधेरे में चला जाता है — और अँधेरा अजंता टावर हर महीने कीमत खोता है।", "ji, this shop is yours, and this money is the upkeep of your own property. Your shop stands in the walls of Ajanta Tower, opens on to its plaza and is known by its name. When the name of Ajanta Tower falls, your shop falls twice — once in the rent it can ask, and again in the price it can fetch. Nothing has come from your side yet. Perhaps it simply slipped past; that happens. But whatever Ajanta Tower looks like today is the result of that waiting. Clearing it now keeps Ajanta Tower worth what you paid to be part of it.": "जी, यह दुकान आपकी है, और यह पैसा आपकी अपनी संपत्ति के रखरखाव का खर्च है। आपकी दुकान अजंता टावर की इन्हीं दीवारों में है, इसी पते पर खुलती है और इसी नाम से पहचानी जाती है। अजंता टावर का नाम गिरा तो आपकी दुकान दो बार गिरती है — एक बार उस किराए में जो वह माँग सकती है, दूसरी बार उस कीमत में जो उसे मिल सकती है। आपकी ओर से अब तक कुछ प्राप्त नहीं हुआ है। संभव है ध्यान न गया हो; ऐसा हो जाता है। पर अजंता टावर आज जैसा दिखता है, वह इसी प्रतीक्षा का परिणाम है। अभी भुगतान कर देना अजंता टावर को वही बनाए रखता है, जिसके लिए आपने पैसा लगाया था।", "ji, this shop is yours, and a whole quarter or more of its upkeep is standing open. You have paid before, so you already know what this money does — it keeps your own property running. Your shop lives inside Ajanta Tower and carries its name. Let that name slip and your shop pays for it twice, in the rent it can ask and in the price it can fetch. You saw what Ajanta Tower was worth once. Please clear the rest now.": "जी, यह दुकान आपकी है, और इसके रखरखाव की पूरी एक तिमाही या उससे अधिक बकाया खड़ी है। आप पहले भुगतान कर चुके हैं, इसलिए आप जानते हैं कि यह पैसा क्या करता है — यह आपकी अपनी संपत्ति को चलाता है। आपकी दुकान अजंता टावर के भीतर है और इसी का नाम ढोती है। वह नाम फिसलने दिया तो दुकान दो बार भरपाई करती है — उस किराए में जो वह माँग सकती है, और उस कीमत में जो उसे मिल सकती है। इस पते की कीमत आपने एक बार पहचानी थी। शेष राशि का भुगतान अभी करें।", "Pay with": "किस ऐप से भेजें", "Google Pay": "Google Pay", "PhonePe": "PhonePe", "Paytm": "Paytm", "paid · nothing pending": "भुगतान पूर्ण · कोई बकाया नहीं", "On a computer these app buttons will not open anything. Scan the QR with your phone, or use the account details beside it.": "कंप्यूटर पर ये ऐप बटन काम नहीं करेंगे। अपने फोन से QR स्कैन कीजिए, या साथ दिए खाते के विवरण का उपयोग कीजिए।", "Money in": "आया", "Money out": "गया", "payment": "भुगतान से", "payments": "भुगतानों से", "Hello": "नमस्ते", "ji": "जी", "Bill": "बिल राशि", "Send": "भेजें", "Send thanks": "धन्यवाद भेजें", "Loading the owner list": "मालिकों की सूची तैयार हो रही है", "Your maintenance for Ajanta Tower — the details and the payment button are here:": "अजंता टावर का आपका रखरखाव शुल्क — पूरा विवरण और भुगतान का बटन यहाँ है:", "Your Ajanta Tower account is fully cleared. Thank you — the details are here:": "अजंता टावर में आपका भुगतान पूर्ण है। धन्यवाद — विवरण यहाँ है:", "__N__ of __T__ owners owe nothing. Between them they have put in __A__ — that is what the building has been running on.": "__T__ में से __N__ मालिकों पर कोई बकाया नहीं। इन सबने मिलाकर __A__ जमा किए हैं — अजंता टावर इसी पैसे से चल रहा है।", "__HEAD__ is the single biggest line at __AMT__ — it is the first thing that has to stop.": "सबसे बड़ा खर्च __HEAD__ है — __AMT__। पैसा घटा तो सबसे पहले यही रुकेगा।", "Cleaning": "सफाई", "Electricity": "बिजली", "Repairs": "मरम्मत", "Tap a shop to see what its colour means": "किसी दुकान पर दबाइए — उसका रंग क्या कहता है, यहाँ पढ़िए", "Your money goes first to keeping this place clean. Please clear the balance — Ajanta Tower keeps its good name, and a Swachh Bharat, a Swasth Bharat begins at your own address.": "आपका यह पैसा सबसे पहले सफाई पर लगता है। शेष राशि का भुगतान करें — अजंता टावर सम्मानित रहेगा, और स्वच्छ भारत, स्वस्थ भारत की शुरुआत अपने ही पते से होती है।", "Welcome to the Ajanta Tower website.": "अजंता टावर की वेबसाइट में आपका स्वागत है।", "This site exists so the accounts stay in front of you at all times — what came in, what went out, and what is left. Nothing is filed away and nothing waits for a meeting.": "यह वेबसाइट इसलिए बनाई गई है कि हिसाब हर समय आपके सामने रहे — क्या आया, क्या गया, और क्या बचा। न कुछ फाइल में बंद रहता है, न किसी बैठक का इंतज़ार करता है।", "Where every ₹100 has gone so far": "अब तक हर ₹100 कहाँ गया", "The split so far": "अब तक का बँटवारा", "Take any ₹100 that reached the association. This is exactly what happened to it, from the first day to today. Tap a colour to see the bills behind it.": "एसोसिएशन तक पहुँचे किसी भी ₹100 को लीजिए — पहले दिन से आज तक उसके साथ ठीक यही हुआ है। किसी रंग पर दबाकर उसके पीछे के बिल देखिए।", "And did you know? Of __T__ owners, only __N__ are keeping this tower running. Their __PAID__ has paid for every cleaning bill, every light and every repair since January. Ajanta Tower is billed for __SPAN__ at ₹__RATE__ a square foot a month, and __OPEN__ of it has still not come in.": "और क्या आपको पता है? इन __T__ मालिकों में से केवल __N__ ही इस टावर को चला रहे हैं। इन्हीं के __PAID__ से जनवरी से अब तक की हर सफाई, हर बत्ती और हर मरम्मत का बिल चुकाया गया है। अजंता टावर पर __SPAN__ का बिल ₹__RATE__ प्रति वर्ग फुट प्रति माह की दर से बना, और उसमें से __OPEN__ अब तक जमा नहीं हुआ।", "shops": "दुकानें", "owners on this floor": "मालिक इस तल पर", "collected": "वसूली", "short of the bills already raised": "बन चुके बिलों से इतना कम है", "more than the bills already raised": "बन चुके बिलों से इतना अधिक है", "is what the association is holding, against the bills below.": "एसोसिएशन के खाते में है, नीचे लिखे बिलों के मुकाबले।", "Likely to come in, at the current": "मौजूदा", "Scan this to pay": "भुगतान के लिए यह QR स्कैन कीजिए", "Open any UPI app, scan, and the amount is already filled in.": "कोई भी UPI ऐप खोलिए, स्कैन कीजिए — रकम पहले से भरी हुई आएगी।", "Google Pay, PhonePe, Paytm — any of them will read it.": "Google Pay, PhonePe, Paytm — किसी से भी स्कैन कर सकते हैं।", "Quarterly bills": "तिमाही बिल", "April to June 2026": "अप्रैल से जून 2026", "January to March 2026": "जनवरी से मार्च 2026", "Happy Independence Day": "स्वतंत्रता दिवस की हार्दिक शुभकामनाएँ", "A clean India and a healthy India begin at your own address.": "स्वच्छ भारत और स्वस्थ भारत की शुरुआत अपने ही पते से होती है।", "Due this month": "इस माह देय", "due by": "देय", "New quarter raised": "नई तिमाही का बिल बन गया", "ji, your account was clear up to June — thank you. The July to September bill has now been raised, and __AMT__ is due by __DATE__. Clearing it keeps your shop on the honour list.": "जी, जून तक आपका हिसाब पूरा था — धन्यवाद। अब जुलाई से सितंबर का बिल बन चुका है, और __AMT__ का भुगतान __DATE__ तक करना है। यह चुका देने पर आपकी दुकान गौरव सूची में बनी रहेगी।", "Jan": "जनवरी", "Feb": "फरवरी", "Mar": "मार्च", "Apr": "अप्रैल", "May": "मई", "Jun": "जून", "Jul": "जुलाई", "Aug": "अगस्त", "Sep": "सितंबर", "Oct": "अक्टूबर", "Nov": "नवंबर", "Dec": "दिसंबर", "__N__ of __T__ owners had cleared everything up to June. Between them they have put in __A__ — that is what the building has been running on.": "__T__ में से __N__ मालिकों ने जून तक का पूरा भुगतान कर दिया था। इन सबने मिलाकर __A__ जमा किए हैं — अजंता टावर इसी पैसे से चल रहा है।", "Cleared up to June": "जून तक पूरा भुगतान", "Paid up to June — new quarter due": "जून तक भुगतान पूरा — नई तिमाही देय", "Two quarters behind": "दो तिमाही बकाया", "Two quarters or more pending": "दो या अधिक तिमाही का भुगतान शेष", "Common area": "सामान्य क्षेत्र", "Close": "बंद करें", "View ledger": "पूरा हिसाब देखिए", "View all floors": "सभी तल देखिए", "Last payment": "अंतिम भुगतान"};
 const EN_OF = (function(){ const m = {}; for (const k in HI) m[HI[k]] = k; return m; })();
 let LANG = "en";
 LANG = "en";
@@ -2466,7 +2613,7 @@ function proudBadge(){
       '<path d="M9.4 18.4l1.2 3.1 1.4-1.5 1.4 1.5 1.2-3.1" fill="none" stroke="#C9A227" stroke-width="1.2" stroke-linejoin="round"/>' +
     '</svg>' +
     '<span>' + tr("Proud owner of Ajanta Tower") +
-      '<small>' + tr("Cleared in full") + '</small></span></div>';
+      '<small>' + tr(inGrace() ? "Cleared up to June" : "Cleared in full") + '</small></span></div>';
 }
 
 function thankYou(name){
@@ -2958,8 +3105,13 @@ function blackout(btn, info){
 function payRing(o){
   const pct = o.dm > 0 ? Math.max(0, Math.min(100, o.p / o.dm * 100)) : 0;
   const shown = Math.round(pct);
-  const col = o.s === "full" ? "#12A08A" : o.s === "near" ? "#4FBF9A" : o.s === "part" ? "#F5A524"
-    : (isRed(o) ? "#D24A2C" : "#E0662B");
+  /* bandOf lives inside render(); this function does not, so the same decision is
+     made here from stateOf, which is top level */
+  const st = stateOf(o);
+  const col = (st === "full" || st === "near")
+      ? (o.b > 0 ? "#2C6FA8" : (st === "full" ? "#12A08A" : "#4FBF9A"))
+      : st === "part" ? "#F5A524"
+      : (isRed(o) ? "#D24A2C" : "#E0662B");
   const R = 34, C = 2 * Math.PI * R;
   const off = C * (1 - pct / 100);
   return '<svg viewBox="0 0 100 100" role="img" aria-label="' + shown + ' percent of the bill paid">' +
@@ -3105,7 +3257,7 @@ const CATS = {
     note:"Not spent. This is sitting in the association's bank account for the bills that come next — housekeeping is due every month and the electricity bill does not wait."}
 };
 
-const PROUD = Object.keys(DATA.own).filter(k => DATA.own[k].s === "full").length;
+const PROUD = Object.keys(DATA.own).filter(k => stateOf(DATA.own[k]) === "full").length;
 const UNITS_HELD = {};
 Object.keys(DATA.units).forEach(f => (DATA.units[f] || []).forEach(p => { UNITS_HELD[p[1]] = (UNITS_HELD[p[1]] || 0) + 1; }));
 let PENDING_TOTAL = 0;
@@ -3370,12 +3522,22 @@ function floorMap(code){
   return m;
 }
 function util(t){ const d = document.createElement("div"); d.className = "util"; d.textContent = t; return d; }
+function shopBand(o){
+  /* the tiles follow exactly the same rule as the cards; "none" is the tile class
+     for behind-but-not-red */
+  if (o.b <= 0) return "full";
+  const st = stateOf(o);
+  if (inGrace() && (st === "full" || st === "near")) return "due";
+  if (isRed(o)) return "zero";
+  return o.p > 0 ? "part" : "none";
+}
+
 function shopBtn(map, n, code){
   const rec = map[parseInt(n,10)];
   if (!rec) return util(n);
   const o = DATA.own[rec.oid];
   const b = document.createElement("button");
-  b.className = "shop " + (isRed(o) ? "zero" : o.s);
+  b.className = "shop " + shopBand(o);
   b.setAttribute("aria-pressed","false");
   b.setAttribute("aria-label", "Shop " + code + "-" + rec.label + ", " + o.n);
   b.textContent = rec.label;
@@ -3450,7 +3612,7 @@ function drawPlan(code){
 
   const units = DATA.units[code] || [];
   const ids = {}; units.forEach(p => ids[p[1]] = 1);
-  const paidCount = Object.keys(ids).filter(i => DATA.own[i].s === "full").length;
+  const paidCount = Object.keys(ids).filter(i => stateOf(DATA.own[i]) === "full").length;
   const pc = floorPct(code);
   const band = pc == null ? "" : (pc >= 90 ? "hi" : pc >= 50 ? "mid" : "lo");
   planHead.innerHTML = "<b>" + meta[1] +
@@ -3467,7 +3629,7 @@ function drawPlan(code){
     units.slice().reverse().forEach(pair => {
       const o = DATA.own[pair[1]];
       const b = document.createElement("button");
-      b.className = "shop " + (isRed(o) ? "zero" : o.s);
+      b.className = "shop " + shopBand(o);
       b.setAttribute("aria-pressed","false");
       b.setAttribute("aria-label", pair[0] + ", " + o.n);
       b.innerHTML = "<span>" + o.n + "<br><small style='font-weight:600;opacity:.75'>" + pair[0] + "</small></span>";
@@ -3633,11 +3795,13 @@ const BANDS = [
   ["zero","Nothing paid","#D24A2C"]
 ];
 function bandOf(o){
-  if (o.s === "full" || o.s === "near") return "full";
-  if (o.s === "part") return "part";
-  return isRed(o) ? "zero" : "arrear";
+  if (o.b <= 0) return "full";
+  const s = stateOf(o);
+  if (inGrace() && (s === "full" || s === "near")) return "due";
+  if (isRed(o)) return "zero";
+  return o.p > 0 ? "part" : "arrear";
 }
-const BLABEL = {full:"Cleared", part:"Part paid", arrear:"Behind", zero:"Nothing paid"};
+const BLABEL = {full:"Cleared", due:"Due this month", part:"Part paid", arrear:"Behind", zero:"Two quarters behind"};
 let sBand = "all";
 const OWNLIST = Object.keys(DATA.own).map(k => Object.assign({k:k}, DATA.own[k]));
 
@@ -3743,18 +3907,22 @@ function renderEditorial(){
     '<div><div class="hk">Come in</div><div class="hv" style="color:#0B6B52">' + inr(T.paid) + '</div></div>' +
     '<div><div class="hk">Still out \u00B7 ' + BEHIND + ' owners</div><div class="hv" style="color:#B33A20">' + inr(OPEN) + '</div></div>';
 
-  const roll = OWNLIST.filter(function(o){ return o.s === "full" || o.s === "near"; })
+  const roll = OWNLIST.filter(function(o){ const s = stateOf(o); return s === "full" || s === "near"; })
     .sort(function(a, b){ return b.p - a.p; });
   const hon = document.getElementById("honour");
   if (hon){
-    const line = tr("__N__ of __T__ owners owe nothing. Between them they have put in __A__ \u2014 that is what the building has been running on.")
+    /* during the grace period these owners DO owe the new quarter, so the line must
+       not claim otherwise - it says what is actually true of them */
+    const line = tr(inGrace()
+        ? "__N__ of __T__ owners had cleared everything up to June. Between them they have put in __A__ \u2014 that is what the building has been running on."
+        : "__N__ of __T__ owners owe nothing. Between them they have put in __A__ \u2014 that is what the building has been running on.")
       .replace("__N__", roll.length)
       .replace("__T__", OWNLIST.length)
       .replace("__A__", "<b>" + inr(roll.reduce(function(s, o){ return s + o.p; }, 0)) + "</b>");
     hon.innerHTML =
       '<div class="hhead">' + medalSVG("hbig") +
         '<div><b>' + tr("Proud owner of Ajanta Tower") + '</b>' +
-        '<small>' + tr("Cleared in full") + '</small></div></div>' +
+        '<small>' + tr(inGrace() ? "Cleared up to June" : "Cleared in full") + '</small></div></div>' +
       '<div class="hnames">' + roll.map(function(o){
         return '<span class="hn">' + medalSVG() + esc(o.n) + '</span>';
       }).join("") + '</div>' +
@@ -3916,6 +4084,7 @@ function waLink(o){ return "https://wa.me/?text=" + encodeURIComponent(waText(o)
 
 /* the button wears the owner's own mood, not one colour for everyone */
 const BAND_TONE = {
+  due:    {bg:"#2C6FA8", soft2:"#4A90C8", txt:"#FFFFFF", sh:"rgba(44,111,168,.85)", soft:"#E7F1FA", line:"#BFD9EE", ink:"#1F5580"},
   zero:   {bg:"#C0391F", soft2:"#E4573A", txt:"#FFFFFF", sh:"rgba(210,74,44,.85)",  soft:"#FBE3DC", line:"#EFC3B6", ink:"#8E2F16"},
   arrear: {bg:"#C9541E", soft2:"#EE7A3C", txt:"#FFFFFF", sh:"rgba(224,102,43,.85)", soft:"#FDE7D6", line:"#F2C7A6", ink:"#8A4212"},
   part:   {bg:"#D98B0C", soft2:"#F5A524", txt:"#3A2503", sh:"rgba(245,165,36,.85)", soft:"#FFF1D6", line:"#F0D6A0", ink:"#7A4B05"},
@@ -3977,7 +4146,7 @@ function panelWA(o){
 function payBlock(o, unit){
   if (!(o.b > 0)){
     /* cleared owners get the same nameplate, in green, with what they have put in */
-    return panelWA(o) + '<div class="payname" style="color:#0B6B52"><small>' + tr("Cleared in full") + '</small>' + esc(o.n) + '</div>' +
+    return panelWA(o) + '<div class="payname" style="color:#0B6B52"><small>' + tr(inGrace() ? "Cleared up to June" : "Cleared in full") + '</small>' + esc(o.n) + '</div>' +
       '<div class="payamt" style="color:#0B6B52">' + inr(o.p) + '</div>' +
       '<p class="paypick">' + tr("paid \u00B7 nothing pending") + '</p>' + billBlock(o);
   }
@@ -4109,14 +4278,14 @@ function standPaint(){
   host.innerHTML = rows.length ? rows.map(function(o){
     const bd = bandOf(o);
     const pct = o.dm > 0 ? Math.max(0, Math.min(100, o.p / o.dm * 100)) : 100;
-    const col = bd === "full" ? "#12A08A" : bd === "part" ? "#F5A524" : bd === "arrear" ? "#E0662B" : "#D24A2C";
+    const col = bd === "full" ? "#12A08A" : bd === "due" ? "#2C6FA8" : bd === "part" ? "#F5A524" : bd === "arrear" ? "#E0662B" : "#D24A2C";
     const bal = o.b > 0 ? inr(o.b) : (o.b < 0 ? inr(-o.b) : "\u20B90");
-    const cap = tr(o.b > 0 ? "still open" : (o.b < 0 ? "in credit" : "cleared"));
     return '<div class="orow st-' + bd + '">' +
       '<div><div class="on">' + (bd === "full" ? medalSVG("medal") : '') + esc(o.n) + '</div>' +
       '<span class="ou">' + esc(o.u || "") + ' \u00B7 ' + tr("bill") + ' ' + inr(o.dm) +
         (o.b > 0 ? ' \u00B7 ' + tr("Paid") + ' ' + inr(o.p) : '') + '</span></div>' +
-      '<div class="ob">' + bal + '<small>' + tr(BLABEL[bd]) + '</small></div>' +
+      '<div class="ob">' + bal + '<small>' +
+        (bd === "due" ? tr("due by") + " " + dueLabel() : tr(BLABEL[bd])) + '</small></div>' +
       '<div class="opb"><i style="width:' + pct.toFixed(1) + '%"></i></div>' +
       '<div class="rowacts">' +
         (o.b > 0 ? '<a class="paymini" href="' + ownerURL(o) + '" style="' + toneVars(toneOf(o)) + '--btxt:' + toneOf(o).ink + '">' +
@@ -4173,6 +4342,7 @@ function stagger(){
 function fitPlan(){ fitToTop(document.getElementById("planwrap")); }
 
 const PF_SWATCH = {
+  due:    ["#E7F1FA","#2C6FA8",""],
   full:   ["#D7F3EC","#12A08A",""],
   near:   ["#E4F7EF","#4FBF9A",""],
   part:   ["#FFF1D6","#F5A524",""],
@@ -4192,8 +4362,8 @@ function planFootFor(o, unit){
     (s[2] ? ';border-style:' + s[2] : '') + '"></i>' +
     '<span><b>' + esc(unit) + '</b> \u00B7 ' + tr(BLABEL_LONG[bd]) + '</span>';
 }
-const BLABEL_LONG = {full:"Fully paid", near:"Almost clear", part:"Part paid",
-  arrear:"A quarter or more pending", zero:"Nothing paid at all"};
+const BLABEL_LONG = {full:"Fully paid", due:"Paid up to June \u2014 new quarter due", near:"Almost clear", part:"Part paid",
+  arrear:"A quarter or more pending", zero:"Two quarters or more pending"};
 
 function showShop(code, rec, btn, real){
   if (real && lockUI) return;
@@ -4202,16 +4372,20 @@ function showShop(code, rec, btn, real){
   planBox.querySelectorAll(".shop").forEach(s => s.setAttribute("aria-pressed", s === btn ? "true" : "false"));
   const o = DATA.own[rec.oid];
   const mp = o.mp == null ? 0 : o.mp;
-  const fv = (o.s === "none" && o.p <= 0) ? "zero" : o.s;
+  const fv = (stateOf(o) === "none" && o.p <= 0) ? "zero" : stateOf(o);
   const redName = '<b class="redname">' + esc(o.n) + '</b>';
   let head, text;
-  if (o.s === "full"){
+  if (bandOf(o) === "due"){
+    head = tr("New quarter raised");
+    text = esc(o.n) + " " + tr("ji, your account was clear up to June \u2014 thank you. The July to September bill has now been raised, and __AMT__ is due by __DATE__. Clearing it keeps your shop on the honour list.")
+      .replace("__AMT__", inr(o.b)).replace("__DATE__", dueLabel());
+  } else if (bandOf(o) === "full"){
     head = tr("Fully paid \u2014 thank you");
     text = esc(o.n) + " " + tr("ji, you have cleared the whole bill. This is the money that pays the housekeeping staff, the electricity and every repair in this building.");
-  } else if (o.s === "near"){
+  } else if (bandOf(o) === "full" && stateOf(o) === "near"){
     head = tr("Almost clear \u2014 thank you");
     text = esc(o.n) + " " + tr("ji, about a month's maintenance is left on your side, and in our book that is as good as clear. Thank you for keeping it current — this is what a paid-up building looks like.");
-  } else if (o.s === "part"){
+  } else if (bandOf(o) === "part"){
     head = tr("Part payment received");
     text = esc(o.n) + " " + tr("ji, you have paid a good part of the bill, and roughly") + " " + (Math.round(mp*10)/10) + " " + tr("months of the upkeep of your own shop is still open. Every rupee you sent went straight back into the property you own. Please close the rest now, while the amount is still small. What the name of Ajanta Tower is worth, you understand better than most.");
   } else if (o.p <= 0){
@@ -4244,14 +4418,14 @@ function showShop(code, rec, btn, real){
     : tr("No payment received yet");
 
   planFootFor(o, code + "-" + (rec.label != null ? rec.label : ""));
-  pDetail.className = "detail pdet anim" + (o.s === "none" ? " sad" : "");
+  pDetail.className = "detail pdet anim" + (stateOf(o) === "none" ? " sad" : "");
   if (real){ void pDetail.offsetWidth; pDetail.className += " fresh"; }
   pDetail.innerHTML =
     payBlock(o, code + "-" + (rec.label != null ? rec.label : "")) +
     '<div class="pnow"><i></i>' + tr("Now showing") + ' <b>' + esc(code + "-" + (rec.label != null ? rec.label : "")) +
       '</b> \u00B7 ' + esc(o.n) + '</div>' +
     '<div class="pmsg"><div class="face">' + payRing(o) + '</div>' +
-    '<div><h4>' + head + '</h4><p>' + text + '</p>' + (o.s === "full" ? proudBadge() : "") + '</div></div>' +
+    '<div><h4>' + head + '</h4><p>' + text + '</p>' + (stateOf(o) === "full" ? proudBadge() : "") + '</div></div>' +
     '<table class="dtab"><tbody>' +
     rows.map(r => '<tr><th>' + r[0] + '</th><td class="' +
       (money.indexOf(r[0]) > -1 ? "money" : wrapv.indexOf(r[0]) > -1 ? "wrapv" : "") + '"' +
@@ -4264,9 +4438,9 @@ function showShop(code, rec, btn, real){
     tallyTap();
     fitPlan();
     dismissFx();
-    if (o.s === "full"){ flash(btn, "fx-pop"); loopFireworks(btn); thankYou(o.n); armDismiss(); }
-    else if (o.s === "near"){ flash(btn, "fx-pop"); loopFx(function(){ nearBurst(btn); }); armDismiss(); }
-    else if (o.s === "part"){ flash(btn, "fx-ring"); loopFx(function(){ fallFx(btn, "part"); }); armDismiss(); }
+    if (stateOf(o) === "full"){ flash(btn, "fx-pop"); loopFireworks(btn); thankYou(o.n); armDismiss(); }
+    else if (stateOf(o) === "near"){ flash(btn, "fx-pop"); loopFx(function(){ nearBurst(btn); }); armDismiss(); }
+    else if (stateOf(o) === "part"){ flash(btn, "fx-ring"); loopFx(function(){ fallFx(btn, "part"); }); armDismiss(); }
     else {
       flash(btn, "fx-shake");
       const kind = isRed(o) ? "zero" : "arrear";
@@ -4351,6 +4525,118 @@ applyLang();
 document.getElementById("ssort").addEventListener("change", renderStand);
 tallyInit();
 revealOn("section .shead, section .lede, .planwrap, .ribbon, .rlab, .list, .months, .thanks, .rules, .stats, .stage, .bandstrip, .twoup, .vnote, .honour, .pred, .hstrip, .payband");
+/* ---------- 3D payment tower: data service + overlays + 2D fallback ----------
+   The WebGL scene itself lives in the module script at the foot of the page.
+   Everything here is plain data work: it converts the register (DATA) into the
+   visualization model, draws the HTML overlays, and renders a flat isometric
+   fallback that stays on screen until (unless) the 3D scene boots. */
+var T3D_COL = {full:"#12A08A", due:"#2C6FA8", part:"#F5A524", arrear:"#E0662B", zero:"#D24A2C", util:"#94A3B8"};
+var T3D_ORDER = ["SF","FF","UGF","LGF"]; /* top to bottom as the building really stands */
+
+function t3dAreaMap(code){
+  var m = {}, src = (DATA.sa && DATA.sa[code]) || {};
+  for (var k in src){
+    if (k.indexOf("Half") === 0) m[k] = src[k];
+    else m[uKey(k)] = src[k];
+  }
+  return m;
+}
+function t3dModel(){
+  var ft = floorTotals();
+  var floors = T3D_ORDER.map(function(code){
+    var meta = FLOORS_META.find(function(f){ return f[0] === code; });
+    var areas = t3dAreaMap(code);
+    var seen = {};
+    var units = (DATA.units[code] || []).map(function(pair){
+      var label = pair[0], oid = pair[1], o = DATA.own[oid];
+      seen[oid] = 1;
+      var bd = shopBand(o);
+      var ak = label.indexOf("Half") === 0 ? label : uKey(label);
+      return {
+        id: code + "-" + label, label: label, oid: String(oid),
+        owner: o.n, band: bd, area: areas[ak] || null, holdArea: o.a,
+        billed: o.dm, paid: o.p, due: Math.max(0, o.b),
+        frac: o.dm > 0 ? Math.max(0, o.b) / o.dm : 0,
+        lastPay: (o.py && o.py.length) ? o.py[o.py.length - 1].d : null,
+        href: ownerURL(o)
+      };
+    });
+    var f = ft[code] || {p:0, dm:0};
+    return { code: code, name: meta ? meta[1] : code, pct: floorPct(code),
+      owners: Object.keys(seen).length, shops: units.length,
+      collected: f.p, open: Math.max(0, f.dm - f.p), units: units };
+  });
+  return { floors: floors, tone: T3D_COL,
+    dueLabel: (typeof dueLabel === "function") ? dueLabel() : "",
+    lang: (typeof LANG !== "undefined") ? LANG : "en" };
+}
+function t3dBandLabel(bd){ return tr(BLABEL[bd] || bd); }
+function t3dOverlays(model){
+  var fl = document.getElementById("t3dfloors");
+  var lg = document.getElementById("t3dlegend");
+  if (!fl || !lg) return;
+  fl.innerHTML = "";
+  model.floors.forEach(function(f){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "t3df"; b.dataset.f = f.code;
+    var pc = f.pct == null ? "\u2014" : f.pct + "%";
+    var tone = f.pct >= 70 ? T3D_COL.full : (f.pct >= 40 ? T3D_COL.part : T3D_COL.zero);
+    b.innerHTML = "<b>" + f.code + "</b><span><span class=\"pc\" style=\"color:" + tone + "\">" +
+      pc + " " + tr("PAID") + "</span><small>" + f.owners + " " + tr("owners on this floor") +
+      " \u00b7 " + f.shops + " " + tr("shops") + "</small></span>";
+    b.addEventListener("click", function(){
+      fl.querySelectorAll(".t3df").forEach(function(x){ x.classList.toggle("on", x === b); });
+      if (window.__T3D && window.__T3D.api) window.__T3D.api.focusFloor(f.code);
+      else if (typeof drawPlan === "function"){ drawPlan(f.code); }
+    });
+    fl.appendChild(b);
+  });
+  var bands = [["full"],["part"],["arrear"],["zero"]];
+  if (model.floors.some(function(f){ return f.units.some(function(u){ return u.band === "due"; }); }))
+    bands.splice(1, 0, ["due"]);
+  lg.innerHTML = bands.map(function(b){
+    return "<span><i style=\"background:" + T3D_COL[b[0]] + "\"></i>" + t3dBandLabel(b[0]) + "</span>";
+  }).join("") + "<span><i style=\"background:" + T3D_COL.util + "\"></i>" + tr("Common area") + "</span>";
+}
+function t3dFallback(model){
+  var host = document.getElementById("t3dfb");
+  if (!host) return;
+  host.innerHTML = "";
+  model.floors.forEach(function(f){
+    var row = document.createElement("div"); row.className = "t3dfbrow";
+    var pc = f.pct == null ? "\u2014" : f.pct + "%";
+    var tone = f.pct >= 70 ? T3D_COL.full : (f.pct >= 40 ? T3D_COL.part : T3D_COL.zero);
+    var k = document.createElement("div"); k.className = "fk";
+    k.innerHTML = "<b>" + f.code + "</b><span style=\"color:" + tone + "\">" + pc + " " + tr("PAID") + "</span>";
+    var plate = document.createElement("div"); plate.className = "t3dplate";
+    var cols = f.units.length <= 4 ? f.units.length : 7;
+    plate.style.gridTemplateColumns = "repeat(" + cols + ",1fr)";
+    f.units.forEach(function(u){
+      var c = document.createElement("i");
+      c.style.background = T3D_COL[u.band] || T3D_COL.util;
+      c.title = u.id + " \u00b7 " + u.owner;
+      plate.appendChild(c);
+    });
+    row.appendChild(k); row.appendChild(plate); host.appendChild(row);
+  });
+  host.classList.add("on");
+}
+function t3dFeed(){
+  var model = t3dModel();
+  t3dOverlays(model);
+  window.__T3D = window.__T3D || {};
+  window.__T3D.model = model;
+  if (window.updatePaymentVisualization){
+    try { window.updatePaymentVisualization(model); } catch(e){}
+  } else {
+    t3dFallback(model);
+  }
+  try { document.dispatchEvent(new CustomEvent("t3d:data")); } catch(e){}
+}
+t3dFeed();
+var t3dPrevRR = RERENDER;
+RERENDER = function(){ t3dPrevRR(); t3dFeed(); };
+
 }
 boot();
 
@@ -4376,6 +4662,502 @@ boot();
     (window.requestAnimationFrame || setTimeout)(paint, 16);
   }, {passive:true});
 })();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}
+</script>
+<script type="module">
+/* Ajanta Tower - real-time 3D payment status visualization.
+   Runs only where ES modules + import maps + WebGL are available; everywhere
+   else the flat isometric fallback rendered by the main script stays on. */
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+
+const stage = document.getElementById("t3dstage");
+const box   = document.getElementById("t3dbox");
+if (stage && box) init();
+
+function webglOK(){
+  try {
+    const c = document.createElement("canvas");
+    return !!(window.WebGLRenderingContext && (c.getContext("webgl2") || c.getContext("webgl")));
+  } catch(e){ return false; }
+}
+
+/* Minimal tween used only if the GSAP CDN failed - same call shape for what we need. */
+const TW = (function(){
+  if (window.gsap) return window.gsap;
+  const act = [];
+  function frame(){
+    const now = performance.now();
+    for (let i = act.length - 1; i >= 0; i--){
+      const a = act[i], t = Math.min(1, (now - a.t0) / a.ms);
+      const e = 1 - Math.pow(1 - t, 3);
+      for (const k in a.to) a.obj[k] = a.from[k] + (a.to[k] - a.from[k]) * e;
+      if (a.upd) a.upd();
+      if (t >= 1){ act.splice(i, 1); if (a.done) a.done(); }
+    }
+    if (act.length) requestAnimationFrame(frame);
+  }
+  return { to(obj, o){
+    const { duration = 0.6, delay = 0, ease, onUpdate, onComplete, ...to } = o;
+    const from = {}; for (const k in to) from[k] = obj[k];
+    setTimeout(() => { act.push({ obj, from, to, ms: duration * 1000, t0: performance.now(), upd: onUpdate, done: onComplete }); if (act.length === 1) requestAnimationFrame(frame); }, delay * 1000);
+  }, timeline(){ /* sequential shim */ let at = 0; const self = { to(obj, o, pos){ const d = (o.duration || 0.6); TW.to(obj, { ...o, delay: (pos != null ? pos : at) }); at = (pos != null ? pos : at) + d; return self; } }; return self; } };
+})();
+
+/* The real footprint: one plan shared by LGF/UGF/FF (39 shops), SF as two halves. */
+const CELLS = (function(){
+  const m = {};
+  ["LIFT",16,"STAIR",17,18,19,20,22,23,24,25,"STAIR"].forEach((u,i) => m["r0c"+i] = { u, c:i, r:0 });
+  const put = (u,c,r) => m["u"+u] = { u, c, r };
+  put(15,0,1); put(14,1,1); put(12,0,2); put(13,1,2); put(11,0,3); put(10,1,3);
+  put(1,0,4);  put(2,1,4);  put(3,2,4);
+  put(9,3,2);  put(8,4,2);  put(7,5,2);  put(4,3,3); put(5,4,3); put(6,5,3);
+  put(30,7,2); put(31,8,2); put(32,9,2); put(40,7,3); put(39,8,3); put(38,9,3);
+  put(26,10,1); put(27,11,1); put(29,10,2); put(28,11,2); put(33,10,3); put(34,11,3);
+  put(37,9,4); put(36,10,4); put(35,11,4);
+  put(16,1,0); put(17,3,0); put(18,4,0); put(19,5,0); put(20,6,0);
+  put(22,7,0); put(23,8,0); put(24,9,0); put(25,10,0);
+  return m;
+})();
+const GRID = { cols:12, rows:5, cell:1.0, gap:0.08 };
+const uNum = s => s.indexOf("/") > -1 ? parseInt(s.split("/").pop(),10) : parseInt(s,10);
+
+function init(){
+  if (!webglOK()) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const small   = window.matchMedia("(max-width: 760px)").matches;
+  let booted = false;
+
+  const start = () => {
+    if (booted || !(window.__T3D && window.__T3D.model)) return;
+    booted = true;
+    try { build(window.__T3D.model, { reduced, small }); }
+    catch(e){ /* fallback stays on screen; nothing else to do */ }
+  };
+  document.addEventListener("t3d:data", start);
+  if ("IntersectionObserver" in window){
+    const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) start(); }, { rootMargin: "300px" });
+    io.observe(stage);
+  } else start();
+  if (window.__T3D && window.__T3D.model) start();
+}
+
+function build(model, opt){
+  const TR = window.tr || (s => s);
+  const COL = model.tone;
+  const W = () => stage.clientWidth, H = () => stage.clientHeight;
+
+  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, opt.small ? 1.75 : 2));
+  renderer.setSize(W(), H());
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  if (!opt.small){ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; }
+  stage.appendChild(renderer.domElement);
+
+  const labelR = new CSS2DRenderer();
+  labelR.setSize(W(), H());
+  Object.assign(labelR.domElement.style, { position:"absolute", inset:"0", pointerEvents:"none" });
+  stage.appendChild(labelR.domElement);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0e1a2b, 26, 60);
+  const camera = new THREE.PerspectiveCamera(40, W()/H(), 0.1, 120);
+  const CAM0 = new THREE.Vector3(11.5, 8.4, 13.5);
+  camera.position.copy(CAM0);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.06;
+  controls.minDistance = 8; controls.maxDistance = 34;
+  controls.minPolarAngle = 0.32; controls.maxPolarAngle = 1.38;
+  controls.target.set(0, 0, 0);
+
+  scene.add(new THREE.HemisphereLight(0xbfd6ea, 0x0a1420, 0.8));
+  const key = new THREE.DirectionalLight(0xffffff, 1.15);
+  key.position.set(9, 14, 7);
+  if (!opt.small){
+    key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.left = key.shadow.camera.bottom = -12;
+    key.shadow.camera.right = key.shadow.camera.top = 12;
+  }
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x6aa0d8, 0.5); rim.position.set(-10, 6, -9); scene.add(rim);
+  const glowPt = new THREE.PointLight(0xf5a524, 0.35, 24); glowPt.position.set(0, 6, 0); scene.add(glowPt);
+
+  const grid = new THREE.GridHelper(46, 30, 0x24405e, 0x16283e);
+  grid.position.y = -7.4; grid.material.transparent = true; grid.material.opacity = 0.35;
+  scene.add(grid);
+
+  /* shared materials: one per band, plus a bright variant for hover/highlight */
+  const mat = {}, hot = {};
+  for (const b of ["full","due","part","arrear","zero","util"]){
+    const c = new THREE.Color(COL[b]);
+    mat[b] = new THREE.MeshStandardMaterial({ color:c, roughness:0.38, metalness:0.18, emissive:c.clone().multiplyScalar(0.16) });
+    hot[b] = new THREE.MeshStandardMaterial({ color:c, roughness:0.25, metalness:0.25, emissive:c.clone().multiplyScalar(0.55) });
+  }
+  const plateMat = new THREE.MeshStandardMaterial({ color:0x1c3550, roughness:0.3, metalness:0.55, transparent:true, opacity:0.94, emissive:0x0d1c2e });
+
+  /* geometry shared by every shop */
+  const shopGeo = new THREE.BoxGeometry(GRID.cell - GRID.gap, 1, GRID.cell - GRID.gap);
+  shopGeo.translate(0, 0.5, 0); /* scale from the plate upward */
+  const plateGeo = (function(){
+    const w = GRID.cols * GRID.cell + 1.3, d = GRID.rows * GRID.cell + 1.3, r = 0.5;
+    const s = new THREE.Shape();
+    s.moveTo(-w/2 + r, -d/2);
+    s.lineTo(w/2 - r, -d/2); s.absarc(w/2 - r, -d/2 + r, r, -Math.PI/2, 0);
+    s.lineTo(w/2, d/2 - r);  s.absarc(w/2 - r, d/2 - r, r, 0, Math.PI/2);
+    s.lineTo(-w/2 + r, d/2); s.absarc(-w/2 + r, d/2 - r, r, Math.PI/2, Math.PI);
+    s.lineTo(-w/2, -d/2 + r);s.absarc(-w/2 + r, -d/2 + r, r, Math.PI, Math.PI*1.5);
+    const g = new THREE.ExtrudeGeometry(s, { depth:0.26, bevelEnabled:true, bevelThickness:0.05, bevelSize:0.05, bevelSegments:2 });
+    g.rotateX(-Math.PI/2);
+    return g;
+  })();
+
+  const tower = new THREE.Group(); scene.add(tower);
+  const SPACING = 2.35, EXPLODE = 1.85;
+  const floorY = i => (model.floors.length - 1 - i) * SPACING - ((model.floors.length - 1) * SPACING) / 2;
+  const cellX = c => (c - (GRID.cols - 1) / 2) * GRID.cell;
+  const cellZ = r => (r - (GRID.rows - 1) / 2) * GRID.cell;
+
+  const shopMeshes = [], plateMeshes = [], byId = {};
+  model.floors.forEach((f, fi) => {
+    const g = new THREE.Group();
+    g.position.y = floorY(fi);
+    g.userData = { code: f.code, baseY: g.position.y, index: fi };
+    tower.add(g);
+
+    const plate = new THREE.Mesh(plateGeo, plateMat);
+    plate.receiveShadow = !opt.small;
+    plate.userData = { floor: f.code };
+    g.add(plate); plateMeshes.push(plate);
+
+    const lbl = document.createElement("div");
+    lbl.style.cssText = "font:700 13px 'Space Grotesk',monospace;color:#C7D7E6;letter-spacing:.12em;text-shadow:0 1px 6px rgba(0,0,0,.7)";
+    lbl.textContent = f.code;
+    const l2 = new CSS2DObject(lbl);
+    l2.position.set(-(GRID.cols * GRID.cell)/2 - 1.5, 0.4, 0);
+    g.add(l2);
+
+    if (f.code === "SF"){
+      f.units.forEach((u, i) => {
+        const geo = new THREE.BoxGeometry(5.6, 1, 4.6); geo.translate(0, 0.5, 0);
+        const m = new THREE.Mesh(geo, mat[u.band] || mat.util);
+        m.position.set(i === 0 ? -3.15 : 3.15, 0.31, 0.35);
+        m.scale.y = 0.16 + 0.5 * u.frac;
+        m.castShadow = !opt.small;
+        m.userData = { unit: u, floor: f.code, sf: true };
+        g.add(m); shopMeshes.push(m); byId[u.id] = m;
+      });
+      /* small grey service strip where the lift and stairs come up */
+      const svc = new THREE.Mesh(shopGeo, mat.util);
+      svc.position.set(cellX(0), 0.31, cellZ(0)); svc.scale.y = 0.14;
+      g.add(svc);
+    } else {
+      /* the common areas: lift, stairs and the atrium void */
+      [["LIFT",0,0],["STAIR",2,0],["STAIR",11,0]].forEach(([t,c,r]) => {
+        const m = new THREE.Mesh(shopGeo, mat.util);
+        m.position.set(cellX(c), 0.31, cellZ(r)); m.scale.y = 0.14;
+        m.userData = { util: t, floor: f.code };
+        g.add(m);
+      });
+      const atr = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.04, 1.9), mat.util);
+      atr.material = mat.util; atr.position.set(cellX(6), 0.33, cellZ(2.5) + 0.5);
+      g.add(atr);
+      f.units.forEach(u => {
+        const n = uNum(u.label), cell = CELLS["u"+n];
+        if (!cell) return;
+        const m = new THREE.Mesh(shopGeo, mat[u.band] || mat.util);
+        m.position.set(cellX(cell.c), 0.31, cellZ(cell.r));
+        m.scale.y = 0.16 + 1.05 * u.frac;
+        m.castShadow = !opt.small;
+        m.userData = { unit: u, floor: f.code };
+        g.add(m); shopMeshes.push(m); byId[u.id] = m;
+      });
+    }
+  });
+
+  /* payment-flow particles, born over the shops that still owe */
+  const flow = { on:false, pts:null };
+  (function(){
+    const owing = shopMeshes.filter(m => m.userData.unit && m.userData.unit.due > 0);
+    const n = Math.min(opt.small ? 26 : 64, owing.length * 3) || 1;
+    const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), seed = [];
+    for (let i = 0; i < n; i++){
+      const src = owing[i % Math.max(1, owing.length)];
+      const p = src ? src.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3();
+      pos.set([p.x, p.y, p.z], i * 3);
+      const c = new THREE.Color(src ? COL[src.userData.unit.band] : COL.part);
+      col.set([c.r, c.g, c.b], i * 3);
+      seed.push({ x:p.x, y:p.y, z:p.z, v: 0.4 + Math.random() * 0.8, o: Math.random() * 6 });
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    const pm = new THREE.PointsMaterial({ size:0.09, vertexColors:true, transparent:true, opacity:0.85, depthWrite:false });
+    flow.pts = new THREE.Points(geo, pm);
+    flow.pts.visible = false; flow.seed = seed;
+    scene.add(flow.pts);
+  })();
+
+  /* ---------- interaction ---------- */
+  const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+  const tip = document.getElementById("t3dtip");
+  const panel = document.getElementById("t3dpanel");
+  let hover = null, focused = null, lastMove = 0;
+
+  function setHover(m){
+    if (hover === m) return;
+    if (hover && hover.userData.unit){ hover.material = mat[hover.userData.unit.band] || mat.util; TW.to(hover.position, { y: 0.31, duration:0.25 }); }
+    hover = m;
+    if (hover && hover.userData.unit){
+      hover.material = hot[hover.userData.unit.band] || hot.util;
+      TW.to(hover.position, { y: 0.31 + 0.14, duration:0.25 });
+    }
+    renderer.domElement.style.cursor = m ? "pointer" : "";
+  }
+  function tipFor(m, x, y){
+    if (!m || !m.userData.unit){ tip.classList.remove("on"); return; }
+    const u = m.userData.unit, bg = COL[u.band];
+    tip.innerHTML = "<b>" + TR("Shop") + " " + u.id + "</b>" + esc2(u.owner) +
+      (u.area ? " \u00b7 " + u.area + " " + TR("sq ft") : "") +
+      "<br><span class=\"amt\">" + inr2(u.due) + "</span> " + TR("open") +
+      "<br><span class=\"tb\" style=\"background:" + bg + "22;color:" + bg + ";border:1px solid " + bg + "55\">" + bandLbl(u.band) + "</span>";
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+    tip.classList.add("on");
+  }
+  const esc2 = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const inr2 = n => "\u20b9" + Math.round(n).toLocaleString("en-IN");
+  const bandLbl = b => { const M = { full:"Fully paid", due:"Paid up to June \u2014 new quarter due", part:"Part paid", arrear:"A quarter or more pending", zero:"Two quarters or more pending" }; return TR(M[b] || b); };
+  const fdate2 = s => { if (!s) return "\u2014"; const p = s.split("-"), MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return p[2].replace(/^0/,"") + " " + TR(MO[+p[1]-1]) + " " + p[0].slice(2); };
+
+  function pick(ev){
+    const r = renderer.domElement.getBoundingClientRect();
+    ptr.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+    ptr.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+    ray.setFromCamera(ptr, camera);
+    const hit = ray.intersectObjects(shopMeshes, false)[0];
+    return { mesh: hit ? hit.object : null, x: ev.clientX - r.left, y: ev.clientY - r.top };
+  }
+  renderer.domElement.addEventListener("pointermove", ev => {
+    lastMove = performance.now(); wake();
+    const p = pick(ev);
+    setHover(p.mesh); tipFor(p.mesh, p.x, p.y);
+  });
+  renderer.domElement.addEventListener("pointerleave", () => { setHover(null); tip.classList.remove("on"); });
+  renderer.domElement.addEventListener("click", ev => {
+    wake();
+    const p = pick(ev);
+    if (p.mesh && p.mesh.userData.unit){ openShop(p.mesh); return; }
+    ray.setFromCamera(ptr, camera);
+    const ph = ray.intersectObjects(plateMeshes, false)[0];
+    if (ph) focusFloor(ph.object.userData.floor);
+  });
+
+  function camTo(pos, tgt, ms){
+    TW.to(camera.position, { x:pos.x, y:pos.y, z:pos.z, duration: ms || 1.1, ease:"power2.inOut" });
+    TW.to(controls.target,  { x:tgt.x, y:tgt.y, z:tgt.z, duration: ms || 1.1, ease:"power2.inOut" });
+  }
+  function openShop(m){
+    focused = m;
+    const u = m.userData.unit;
+    const wp = m.getWorldPosition(new THREE.Vector3());
+    camTo(wp.clone().add(new THREE.Vector3(4.5, 3.4, 5.2)), wp, 0.9);
+    panel.innerHTML =
+      "<h4>" + TR("Shop") + " " + u.id + "</h4>" +
+      "<div class=\"pu\">" + m.userData.floor + " \u00b7 " + esc2(u.owner) + "</div>" +
+      "<table>" +
+      (u.area ? "<tr><td>" + TR("Total area") + "</td><td>" + u.area + " " + TR("sq ft") + "</td></tr>" : "") +
+      "<tr><td>" + TR("Bill") + "</td><td>" + inr2(u.billed) + "</td></tr>" +
+      "<tr><td>" + TR("Paid") + "</td><td>" + inr2(u.paid) + "</td></tr>" +
+      "<tr><td>" + TR("Pending") + "</td><td style=\"color:" + (u.due > 0 ? COL.zero : COL.full) + "\">" + inr2(u.due) + "</td></tr>" +
+      "<tr><td>" + TR("Last payment") + "</td><td>" + fdate2(u.lastPay) + "</td></tr>" +
+      "</table>" +
+      "<div class=\"t3dbands\"><i style=\"flex:" + Math.max(1, u.paid) + ";background:" + COL.full + "\"></i>" +
+      "<i style=\"flex:" + Math.max(0.02, u.due) + ";background:" + COL.zero + "\"></i></div>" +
+      "<div class=\"prow\"><button type=\"button\" class=\"pcls\" data-x=\"1\">" + TR("Close") + "</button>" +
+      "<a class=\"pled\" href=\"" + u.href + "\">" + TR("View ledger") + "</a></div>";
+    panel.classList.add("on");
+    panel.querySelector("[data-x]").onclick = closePanel;
+    if (u.due > 0){ pulse(m); }
+  }
+  function closePanel(){ panel.classList.remove("on"); focused = null; }
+  function focusFloor(code){
+    const g = tower.children.find(c => c.userData.code === code);
+    if (!g) return;
+    const f = model.floors.find(x => x.code === code);
+    /* the focused floor stays full size; the others ease back a little, which
+       reads as dimming without cloning any materials */
+    tower.children.forEach(c => {
+      const dim = c !== g;
+      TW.to(c.position, { y: c.userData.baseY * (exploded ? EXPLODE : 1), duration: 0.8 });
+      TW.to(c.scale, { x: dim ? 0.93 : 1, y: dim ? 0.93 : 1, z: dim ? 0.93 : 1, duration: 0.7 });
+    });
+    camTo(new THREE.Vector3(8.5, g.position.y + 5.2, 10.5), new THREE.Vector3(0, g.position.y, 0), 1.0);
+    panel.innerHTML =
+      "<h4>" + code + " \u00b7 " + (f.pct == null ? "\u2014" : f.pct + "% " + TR("PAID")) + "</h4>" +
+      "<div class=\"pu\">" + f.owners + " " + TR("owners on this floor") + " \u00b7 " + f.shops + " " + TR("shops") + "</div>" +
+      "<table><tr><td>" + TR("collected") + "</td><td>" + inr2(f.collected) + "</td></tr>" +
+      "<tr><td>" + TR("still open") + "</td><td style=\"color:" + COL.zero + "\">" + inr2(f.open) + "</td></tr></table>" +
+      "<div class=\"prow\"><button type=\"button\" class=\"pcls\" data-x=\"1\">" + TR("View all floors") + "</button></div>";
+    panel.classList.add("on");
+    panel.querySelector("[data-x]").onclick = () => {
+      closePanel();
+      tower.children.forEach(c => TW.to(c.scale, { x:1, y:1, z:1, duration:0.6 }));
+      camTo(CAM0, new THREE.Vector3(0,0,0), 1.0);
+    };
+  }
+
+  function pulse(m){
+    const u = m.userData.unit, bright = hot[u.band];
+    const base = mat[u.band];
+    m.material = bright;
+    setTimeout(() => { if (hover !== m) m.material = base; }, 900);
+  }
+
+  /* ---------- controls bar ---------- */
+  const ctl = document.getElementById("t3dctl");
+  ctl.hidden = false;
+  const btn = id => document.getElementById(id);
+  let exploded = false, spinning = false;
+  btn("t3dReset").onclick = () => {
+    closePanel(); exploded = false; btn("t3dExplode").setAttribute("aria-pressed","false");
+    tower.children.forEach(c => { TW.to(c.position, { y: c.userData.baseY, duration: 0.9, ease:"power2.inOut" }); TW.to(c.scale, { x:1,y:1,z:1,duration:0.6 }); });
+    camTo(CAM0, new THREE.Vector3(0,0,0), 1.0);
+  };
+  btn("t3dExplode").onclick = function(){
+    exploded = !exploded;
+    this.setAttribute("aria-pressed", String(exploded));
+    tower.children.forEach(c => TW.to(c.position, { y: c.userData.baseY * (exploded ? EXPLODE : 1), duration: 1.0, ease:"power2.inOut" }));
+  };
+  btn("t3dFlow").onclick = function(){
+    flow.on = !flow.on;
+    this.setAttribute("aria-pressed", String(flow.on));
+    flow.pts.visible = flow.on;
+  };
+  btn("t3dSpin").onclick = function(){
+    spinning = !spinning;
+    this.setAttribute("aria-pressed", String(spinning));
+  };
+  btn("t3dFull").onclick = function(){
+    const on = box.classList.toggle("expand");
+    this.setAttribute("aria-pressed", String(on));
+    if (on && box.requestFullscreen) box.requestFullscreen().catch(() => {});
+    else if (!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    resize();
+  };
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement && box.classList.contains("expand")){
+      box.classList.remove("expand"); btn("t3dFull").setAttribute("aria-pressed","false"); resize();
+    }
+  });
+
+  let lastTouch = performance.now();
+  const wake = () => { lastTouch = performance.now(); };
+  controls.addEventListener("start", wake);
+
+  /* ---------- live updates ---------- */
+  window.updatePaymentVisualization = function(next){
+    next.floors.forEach(f => f.units.forEach(u => {
+      const m = byId[u.id];
+      if (!m) return;
+      const prev = m.userData.unit;
+      m.userData.unit = u;
+      if (prev.band !== u.band){
+        m.material = hot[u.band] || hot.util;
+        TW.to(m.scale, { y: (m.userData.sf ? 0.16 + 0.5 * u.frac : 0.16 + 1.05 * u.frac), duration: 0.9, ease: "power2.out" });
+        const keep = m;
+        setTimeout(() => { if (hover !== keep) keep.material = mat[u.band] || mat.util; }, 1400);
+      } else {
+        m.material = (hover === m ? hot : mat)[u.band] || mat.util;
+        m.scale.y = m.userData.sf ? 0.16 + 0.5 * u.frac : 0.16 + 1.05 * u.frac;
+      }
+    }));
+    model = next;
+  };
+
+  /* ---------- entrance choreography ---------- */
+  const fbEl = document.getElementById("t3dfb");
+  if (fbEl) fbEl.classList.remove("on");
+  const kids = tower.children.slice();
+  if (!opt.reduced){
+    kids.forEach((g, i) => {
+      const target = g.userData.baseY;
+      g.position.y = target - 7.5;
+      g.traverse(o => { if (o.isMesh && o.userData.unit) o.scale.y *= 0.001; });
+      /* LGF first, then FF, UGF, SF: bottom of the array upward */
+      const order = kids.length - 1 - i;
+      TW.to(g.position, { y: target, duration: 1.0, delay: 0.25 + order * 0.28, ease: "power3.out" });
+    });
+    setTimeout(() => {
+      shopMeshes.forEach((m, i) => {
+        const u = m.userData.unit;
+        const sy = m.userData.sf ? 0.16 + 0.5 * u.frac : 0.16 + 1.05 * u.frac;
+        TW.to(m.scale, { y: sy, duration: 0.7, delay: (i % 20) * 0.03, ease: "power2.out" });
+      });
+      countUp();
+    }, 250 + kids.length * 280 + 500);
+  } else {
+    countUp(true);
+  }
+  function countUp(instant){
+    document.querySelectorAll("#t3dfloors .pc").forEach(el => {
+      const txt = el.textContent, mnum = txt.match(/\d+/);
+      if (!mnum) return;
+      const end = +mnum[0], suffix = txt.slice(txt.indexOf(mnum[0]) + mnum[0].length);
+      if (instant) return;
+      const o = { v: 0 };
+      TW.to(o, { v: end, duration: 1.4, ease: "power1.out", onUpdate(){ el.textContent = Math.round(o.v) + suffix; } });
+    });
+  }
+
+  /* ---------- frame loop ---------- */
+  const clock = new THREE.Clock();
+  let running = true;
+  if ("IntersectionObserver" in window){
+    new IntersectionObserver(es => { running = es.some(x => x.isIntersecting) || !!document.fullscreenElement; })
+      .observe(stage);
+  }
+  function frame(){
+    requestAnimationFrame(frame);
+    if (!running) return;
+    const t = clock.getElapsedTime();
+    if (!opt.reduced){
+      tower.position.y = Math.sin(t * 0.6) * 0.07;
+      key.intensity = 1.15 + Math.sin(t * 0.8) * 0.06;
+      if (spinning && performance.now() - lastTouch > 3000) tower.rotation.y += 0.0016;
+      if (flow.on && flow.pts){
+        const p = flow.pts.geometry.attributes.position;
+        for (let i = 0; i < flow.seed.length; i++){
+          const s = flow.seed[i];
+          const ph = ((t * s.v + s.o) % 3) / 3;
+          p.setXYZ(i, s.x, s.y + ph * 1.6, s.z);
+        }
+        flow.pts.material.opacity = 0.85;
+        p.needsUpdate = true;
+      }
+    }
+    controls.update();
+    renderer.render(scene, camera);
+    labelR.render(scene, camera);
+  }
+  /* one synchronous frame before any rAF, so the panel is never blank */
+  renderer.render(scene, camera); labelR.render(scene, camera);
+  frame();
+
+  function resize(){
+    camera.aspect = W() / H(); camera.updateProjectionMatrix();
+    renderer.setSize(W(), H()); labelR.setSize(W(), H());
+  }
+  if ("ResizeObserver" in window) new ResizeObserver(resize).observe(stage);
+  else window.addEventListener("resize", resize);
+
+  /* expose a tiny api for the overlay chips */
+  window.__T3D.api = { focusFloor, reset: () => btn("t3dReset").onclick() };
+}
 </script>
 </body>
 </html>
