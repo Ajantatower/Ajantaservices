@@ -35,6 +35,7 @@ DATESTAMP = __import__("datetime").date.today().strftime("%y%m%d")
 QUARTERS = [
     ("2026Q1", "JANUARY TO MARCH 2026", "15-Feb-26", "0226"),
     ("2026Q2", "APRIL TO JUNE 2026",    "15-May-26", "0526"),
+    ("2026Q3", "JULY TO SEPTEMBER 2026", "15-Aug-26", "0826"),
 ]
 QMY = {q[0]: q[3] for q in QUARTERS}
 SERIALS = {}          # filled in main(): quarter -> {party key: 1, 2, 3, ...}
@@ -404,6 +405,14 @@ def owner_page(key, o):
 def main():
     data = json.load(open(os.path.join(ROOT, "data", "slim.json"), encoding="utf-8"))
     own  = data["own"]
+
+    # Per-shop super areas for the 3D payment tower. Areas only, from the master
+    # sheet via shoparea.py; ownership always comes from the register (slim.json).
+    sa = {}
+    for k, a in SHOP_AREA.items():
+        fl, unit = k.split("-", 1)
+        sa.setdefault(fl, {})[unit] = a
+    data["sa"] = sa
 
     if os.path.isdir(OUT):
         shutil.rmtree(OUT)
