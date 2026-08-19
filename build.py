@@ -17,7 +17,7 @@ try:
     import qr as qrlib
     import invoice as inv
     import ownerpage
-    from shoparea import AREA as SHOP_AREA
+    from shoparea import AREA as SHOP_AREA, CARPET
 except ModuleNotFoundError as e:
     raise SystemExit(
         "MISSING MODULE: %s\n"
@@ -413,6 +413,9 @@ def main():
         fl, unit = k.split("-", 1)
         sa.setdefault(fl, {})[unit] = a
     data["sa"] = sa
+    # and the carpet areas beside them - the tower is drawn to carpet, the bill
+    # is still worked out on super area, and a shop panel can show both
+    data["ca"] = CARPET
 
     if os.path.isdir(OUT):
         shutil.rmtree(OUT)
